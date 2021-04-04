@@ -1,4 +1,4 @@
-package com.mistar.memo.model.entity
+package com.mistar.memo.domain.model.entity
 
 import javax.persistence.*
 
@@ -9,9 +9,9 @@ data class Tag(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
-    @Column(length = 50)
-    val content: String,
-
     @Column
-    val memoId: Int
+    var memoId: Int?,
+
+    @Column(length = 50)
+    val content: String
 )
