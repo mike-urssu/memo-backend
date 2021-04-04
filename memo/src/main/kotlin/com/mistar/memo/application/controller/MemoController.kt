@@ -1,13 +1,11 @@
 package com.mistar.memo.application.controller
 
 import com.mistar.memo.application.request.MemoPostRequest
+import com.mistar.memo.application.response.MemoResponse
 import com.mistar.memo.domain.service.MemoService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/memos")
@@ -22,5 +20,14 @@ class MemoController(
 
         val memoPostDto = memoPostRequest.toMemoPostDto()
         return memoService.createMemoAndTags(memoPostDto)
+    }
+
+    @GetMapping("/list/{page}")
+    fun selectAllMemos(
+        @PathVariable page: Int
+    ): MemoResponse {
+        logger.info("/v1/memos/list/$page")
+        val memos = memoService.selectAllMemos(page)
+        return MemoResponse(memos)
     }
 }

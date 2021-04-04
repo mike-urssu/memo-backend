@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "memos")
-@Where(clause = "is_deleted is false and is_public is true")
+@Where(clause = "is_deleted = false and is_public = true")
 data class Memo(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
