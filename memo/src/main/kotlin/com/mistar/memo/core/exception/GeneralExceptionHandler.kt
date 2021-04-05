@@ -35,4 +35,10 @@ class GeneralExceptionHandler {
         }
         return ErrorResponse(HttpStatus.BAD_REQUEST, "System-003", builder.toString())
     }
+
+    @ExceptionHandler(IllegalStateException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleAmbiguousUrl(exception: IllegalStateException): ErrorResponse {
+        return ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System-004", "ambiguous Url Mapping")
+    }
 }

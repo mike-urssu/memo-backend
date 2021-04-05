@@ -2,6 +2,7 @@ package com.mistar.memo.domain.service
 
 import com.mistar.memo.application.controller.MemoController
 import com.mistar.memo.domain.exception.InvalidPageException
+import com.mistar.memo.domain.exception.MemoNotFoundException
 import com.mistar.memo.domain.exception.PageOutOfBoundsException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.MemoPostDto
@@ -49,5 +50,10 @@ class MemoService(
 
         val requestedPage = Page(page - 1, defaultPageSize)
         return memoRepository.findAll(requestedPage).toList()
+    }
+
+    fun selectMemosById(memoId: Int): List<Memo> {
+        val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
+        return listOf(memo)
     }
 }

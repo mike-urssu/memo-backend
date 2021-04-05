@@ -30,4 +30,13 @@ class MemoController(
         val memos = memoService.selectAllMemos(page)
         return MemoResponse(memos)
     }
+
+    @GetMapping("/{memoId}")
+    fun selectMemosById(
+        @PathVariable memoId: Int,
+    ): MemoResponse {
+        logger.info("/v1/memos/$memoId")
+        val memos = memoService.selectMemosById(memoId)
+        return MemoResponse(memos)
+    }
 }
