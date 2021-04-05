@@ -2,6 +2,7 @@ package com.mistar.memo.application.exception
 
 import com.mistar.memo.core.response.ErrorResponse
 import com.mistar.memo.domain.exception.InvalidPageException
+import com.mistar.memo.domain.exception.MemoNotFoundException
 import com.mistar.memo.domain.exception.PageOutOfBoundsException
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
@@ -16,12 +17,18 @@ class MemoExceptionHandler {
     @ExceptionHandler(InvalidPageException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleInvalidPage(exception: InvalidPageException): ErrorResponse {
-        return ErrorResponse(HttpStatus.BAD_REQUEST, "Memo-001", exception.message!!)
+        return ErrorResponse(HttpStatus.BAD_REQUEST, "Page-001", exception.message!!)
     }
 
     @ExceptionHandler(PageOutOfBoundsException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handlePageOutOfBounds(exception: PageOutOfBoundsException): ErrorResponse {
-        return ErrorResponse(HttpStatus.BAD_REQUEST, "Memo-002", exception.message!!)
+        return ErrorResponse(HttpStatus.BAD_REQUEST, "Page-002", exception.message!!)
+    }
+
+    @ExceptionHandler(MemoNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleMemoNotFound(exception: MemoNotFoundException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, "Memo-001", exception.message!!)
     }
 }
