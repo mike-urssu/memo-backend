@@ -56,4 +56,23 @@ class MemoService(
         val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
         return listOf(memo)
     }
+
+    fun selectMemosByTag(tag: String, page: Int): List<Memo> {
+        if (page < 1)
+            throw InvalidPageException()
+        val requestedPage = Page(page, defaultPageSize)
+
+        val tags = tagRepository.findByContentContaining(tag)
+        val memoIds = LinkedHashSet<Int>()
+        for (tag in tags)
+            memoIds.add(tag.memoId!!)
+        val memos = memoRepository.findAllById(memoIds)
+        val memoCnt = memos.size
+        if (memoCnt < (page - 1) * 10)
+            throw PageOutOfBoundsException()
+        for (memo in memos) {
+            logger.info("memoId: ${memo.id}")
+        }
+        return memos
+    }
 }
