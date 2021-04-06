@@ -27,6 +27,6 @@ data class Memo(
     @Column
     var isDeleted: Boolean = false,
 
-    @OneToMany(mappedBy = "memoId")
-    var tags: List<Tag>
+    @OneToMany(mappedBy = "memoId", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    var tags: Set<Tag>
 )

@@ -27,6 +27,7 @@ class MemoController(
         @PathVariable page: Int
     ): MemoResponse {
         logger.info("/v1/memos/list/$page")
+
         val memos = memoService.selectAllMemos(page)
         return MemoResponse(memos)
     }
@@ -36,7 +37,28 @@ class MemoController(
         @PathVariable memoId: Int,
     ): MemoResponse {
         logger.info("/v1/memos/$memoId")
+
         val memos = memoService.selectMemosById(memoId)
         return MemoResponse(memos)
+    }
+
+    @GetMapping("/list/tag/{tag}/{page}")
+    fun selectMemosByTag(
+        @PathVariable tag: String,
+        @PathVariable page: Int
+    ): MemoResponse {
+        logger.info("/v1/memos/list/tag/$tag/$page")
+
+        val memos = memoService.selectMemosByTag(tag, page)
+        return MemoResponse(memos)
+    }
+
+    @DeleteMapping("/delete/{memoId}")
+    fun deleteMemo(
+        @PathVariable memoId: Int
+    ) {
+        logger.info("/v1/memos/delete/$memoId")
+
+        return memoService.deleteMemo(memoId)
     }
 }

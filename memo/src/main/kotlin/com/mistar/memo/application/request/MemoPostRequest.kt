@@ -13,7 +13,7 @@ class MemoPostRequest(
     private val tags: List<String>
 ) {
     fun toMemoPostDto(): MemoPostDto {
-        val tags = arrayListOf<Tag>()
+        val tags = LinkedHashSet<Tag>()
         for (tag in this.tags)
             tags.add(Tag(memoId = null, content = tag))
         return MemoPostDto(title, content, isPublic, tags)
