@@ -75,4 +75,10 @@ class MemoService(
         }
         return memos
     }
+
+    fun deleteMemo(memoId: Int) {
+        val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
+        memo.isDeleted = true
+        memoRepository.save(memo)
+    }
 }

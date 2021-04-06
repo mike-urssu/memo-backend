@@ -49,4 +49,12 @@ class MemoController(
         val memos = memoService.selectMemosByTag(tag, page)
         return MemoResponse(memos)
     }
+
+    @DeleteMapping("/delete/{memoId}")
+    fun deleteMemo(
+        @PathVariable memoId: Int
+    ) {
+        logger.info("/v1/memos/delete/$memoId")
+        return memoService.deleteMemo(memoId)
+    }
 }
