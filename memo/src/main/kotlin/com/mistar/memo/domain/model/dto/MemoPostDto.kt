@@ -9,5 +9,5 @@ class MemoPostDto(
 
     val isPublic: Boolean,
 
-    val tags: List<Tag>
+    val tags: Set<Tag>
 )

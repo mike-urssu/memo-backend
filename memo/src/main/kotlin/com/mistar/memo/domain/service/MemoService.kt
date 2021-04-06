@@ -31,12 +31,12 @@ class MemoService(
                 tags = memoPostDto.tags
             )
         )
-        createTags(memo, memoPostDto.tags)
+        createTags(memo.id!!, memoPostDto.tags)
     }
 
-    private fun createTags(memo: Memo, tags: List<Tag>) {
+    private fun createTags(memoId: Int, tags: Set<Tag>) {
         for (tag in tags) {
-            tag.memoId = memo.id
+            tag.memoId = memoId
             tagRepository.save(tag)
         }
     }
