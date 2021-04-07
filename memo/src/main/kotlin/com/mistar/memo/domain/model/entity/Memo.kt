@@ -1,5 +1,6 @@
 package com.mistar.memo.domain.model.entity
 
+import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -7,6 +8,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "memos")
 @Where(clause = "is_deleted = false and is_public = true")
+@DynamicUpdate
 data class Memo(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +30,5 @@ data class Memo(
     var isDeleted: Boolean = false,
 
     @OneToMany(mappedBy = "memoId", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
-    var tags: Set<Tag>
+    var tags: MutableSet<Tag>
 )
