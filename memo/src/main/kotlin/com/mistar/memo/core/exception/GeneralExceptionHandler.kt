@@ -5,6 +5,7 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -39,6 +40,12 @@ class GeneralExceptionHandler {
     @ExceptionHandler(IllegalStateException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleAmbiguousUrl(exception: IllegalStateException): ErrorResponse {
-        return ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System-004", "ambiguous Url Mapping")
+        return ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System-004", "ambiguous url mapping")
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    fun handleAmbiguousUrl(exception: HttpRequestMethodNotSupportedException): ErrorResponse {
+        return ErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, "System-005", "wrong url mapping")
     }
 }

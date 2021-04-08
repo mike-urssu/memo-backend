@@ -5,6 +5,7 @@ import com.mistar.memo.domain.exception.InvalidPageException
 import com.mistar.memo.domain.exception.MemoNotFoundException
 import com.mistar.memo.domain.exception.PageOutOfBoundsException
 import com.mistar.memo.domain.model.common.Page
+import com.mistar.memo.domain.model.dto.MemoPatchDto
 import com.mistar.memo.domain.model.dto.MemoPostDto
 import com.mistar.memo.domain.model.entity.Memo
 import com.mistar.memo.domain.model.entity.Tag
@@ -13,6 +14,7 @@ import com.mistar.memo.domain.model.repository.TagRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MemoService(
@@ -22,7 +24,7 @@ class MemoService(
     private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
     private val defaultPageSize = 10
 
-    fun createMemoAndTags(memoPostDto: MemoPostDto) {
+    fun createMemo(memoPostDto: MemoPostDto) {
         val memo = memoRepository.save(
             Memo(
                 title = memoPostDto.title,
@@ -74,6 +76,25 @@ class MemoService(
             logger.info("memoId: ${memo.id}")
         }
         return memos
+    }
+
+    @Transactional
+    fun patchMemo(memoId: Int, memoPatchDto: MemoPatchDto) {
+        val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
+        if (memoPatchDto.title != null)
+            memo.title = memoPatchDto.title
+        if (memoPatchDto.content != null)
+            memo.content = memoPatchDto.content
+        if (memoPatchDto.isPublic != null)
+            memo.isPublic = memoPatchDto.isPublic
+
+        if (memoPatchDto.tags.isNotEmpty()) {
+            tagRepository.deleteByMemoId(memoId)
+            memo.tags.clear()
+            memo.tags = memoPatchDto.tags
+            for (tag in memoPatchDto.tags)
+                tagRepository.save(Tag(memoId = memoId, content = tag.content))
+        }
     }
 
     fun deleteMemo(memoId: Int) {

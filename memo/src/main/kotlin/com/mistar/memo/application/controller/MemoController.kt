@@ -1,5 +1,6 @@
 package com.mistar.memo.application.controller
 
+import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
 import com.mistar.memo.domain.service.MemoService
@@ -15,11 +16,13 @@ class MemoController(
     private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
 
     @PostMapping("/post")
-    fun createMemo(@RequestBody memoPostRequest: MemoPostRequest) {
+    fun createMemo(
+        @RequestBody memoPostRequest: MemoPostRequest
+    ) {
         logger.info("/v1/memos/post")
 
         val memoPostDto = memoPostRequest.toMemoPostDto()
-        return memoService.createMemoAndTags(memoPostDto)
+        return memoService.createMemo(memoPostDto)
     }
 
     @GetMapping("/list/{page}")
@@ -51,6 +54,17 @@ class MemoController(
 
         val memos = memoService.selectMemosByTag(tag, page)
         return MemoResponse(memos)
+    }
+
+    @PatchMapping("/patch/{memoId}")
+    fun patchMemo(
+        @PathVariable memoId: Int,
+        @RequestBody memoPatchRequest: MemoPatchRequest
+    ) {
+        logger.info("/v1/memos/patch/$memoId")
+
+        val memoPatchDto = memoPatchRequest.toMemoPatchDto()
+        return memoService.patchMemo(memoId, memoPatchDto)
     }
 
     @DeleteMapping("/delete/{memoId}")
