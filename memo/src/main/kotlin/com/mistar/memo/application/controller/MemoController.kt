@@ -4,8 +4,10 @@ import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
 import com.mistar.memo.domain.service.MemoService
+import io.swagger.annotations.ApiOperation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,7 +17,9 @@ class MemoController(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
 
+    @ApiOperation("메모 생성하기")
     @PostMapping("/post")
+    @ResponseStatus(HttpStatus.CREATED)
     fun createMemo(
         @RequestBody memoPostRequest: MemoPostRequest
     ) {
@@ -25,6 +29,7 @@ class MemoController(
         return memoService.createMemo(memoPostDto)
     }
 
+    @ApiOperation("모든 메모 불러오기")
     @GetMapping("/list/{page}")
     fun selectAllMemos(
         @PathVariable page: Int
@@ -35,6 +40,7 @@ class MemoController(
         return MemoResponse(memos)
     }
 
+    @ApiOperation("특정 id의 메모 불러오기")
     @GetMapping("/{memoId}")
     fun selectMemosById(
         @PathVariable memoId: Int,
@@ -45,6 +51,7 @@ class MemoController(
         return MemoResponse(memos)
     }
 
+    @ApiOperation("태그가 동일한 메모 불러오기")
     @GetMapping("/list/tag/{tag}/{page}")
     fun selectMemosByTag(
         @PathVariable tag: String,
@@ -56,6 +63,7 @@ class MemoController(
         return MemoResponse(memos)
     }
 
+    @ApiOperation("메모 수정하기")
     @PatchMapping("/patch/{memoId}")
     fun patchMemo(
         @PathVariable memoId: Int,
@@ -67,6 +75,7 @@ class MemoController(
         return memoService.patchMemo(memoId, memoPatchDto)
     }
 
+    @ApiOperation("메모 삭제하기")
     @DeleteMapping("/delete/{memoId}")
     fun deleteMemo(
         @PathVariable memoId: Int
