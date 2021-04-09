@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository
 interface TagRepository : JpaRepository<Tag, Int> {
     fun findByContentContaining(tag: String): List<Tag>
 
-    fun deleteByMemoId(memoId: Int)
-
-    fun findByMemoId(memoId: Int): List<Tag>
+    fun existsByMemoIdAndContent(memoId: Int, content: String): Boolean
 }
