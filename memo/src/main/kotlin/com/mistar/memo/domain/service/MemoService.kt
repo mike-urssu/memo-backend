@@ -88,12 +88,35 @@ class MemoService(
         if (memoPatchDto.isPublic != null)
             memo.isPublic = memoPatchDto.isPublic
 
-        if (memoPatchDto.tags.isNotEmpty()) {
-            tagRepository.deleteByMemoId(memoId)
-            memo.tags.clear()
-            memo.tags = memoPatchDto.tags
-            for (tag in memoPatchDto.tags)
-                tagRepository.save(Tag(memoId = memoId, content = tag.content))
+        deleteTags(memo, memoPatchDto)
+        saveTags(memo, memoPatchDto)
+    }
+
+    private fun deleteTags(memo: Memo, memoPatchDto: MemoPatchDto) {
+        val contents = arrayListOf<String>()
+        val tagsToDelete = arrayListOf<Tag>()
+
+        for (tag in memoPatchDto.tags)
+            contents.add(tag.content)
+
+        for (tag in memo.tags)
+            if (!contents.contains(tag.content))
+                tagsToDelete.add(tag)
+
+        for (tag in tagsToDelete) {
+            tagRepository.delete(tag)
+            memo.tags.remove(tag)
+        }
+    }
+
+    private fun saveTags(memo: Memo, memoPatchDto: MemoPatchDto) {
+        for (tag in memoPatchDto.tags) {
+            if (!tagRepository.existsByMemoIdAndContent(memo.id!!, tag.content)) {
+                logger.info(tag.content)
+                memo.tags.add(tag)
+                tag.memoId = memo.id!!
+                tagRepository.save(tag)
+            }
         }
     }
 
