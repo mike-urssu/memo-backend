@@ -52,12 +52,12 @@ class MemoController(
     }
 
     @ApiOperation("태그가 동일한 메모 불러오기")
-    @GetMapping("/list/tag/{tag}/{page}")
+    @GetMapping("/list/{page}/tags/{tag}")
     fun selectMemosByTag(
         @PathVariable tag: String,
         @PathVariable page: Int
     ): MemoResponse {
-        logger.info("/v1/memos/list/tag/$tag/$page")
+        logger.info("/v1/memos/list/$page/tag/$tag")
 
         val memos = memoService.selectMemosByTag(tag, page)
         return MemoResponse(memos)
