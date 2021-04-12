@@ -7,7 +7,6 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "memos")
-@Where(clause = "is_deleted = false and is_public = true")
 @DynamicUpdate
 data class Memo(
     @field:Id
@@ -29,6 +28,9 @@ data class Memo(
     @Column
     var isDeleted: Boolean = false,
 
-    @OneToMany(mappedBy = "memoId", cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @Column
+    var deletedAt: LocalDateTime = LocalDateTime.now(),
+
+    @OneToMany(mappedBy = "memoId")
     var tags: MutableSet<Tag>
 )

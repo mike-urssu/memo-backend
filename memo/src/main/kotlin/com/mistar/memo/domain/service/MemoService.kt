@@ -13,8 +13,10 @@ import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class MemoService(
@@ -138,5 +140,17 @@ class MemoService(
 
         memo.isDeleted = true
         memoRepository.save(memo)
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 2 * * *")
+    fun deleteMemos() {
+        logger.info("${LocalDateTime.now()}     execute scheduled job - delete memos")
+        val now = LocalDateTime.now().minusSeconds(10)
+        val memosToDelete = memoRepository.findAllByDeletedAtBeforeAndIsDeletedIsTrue(now)
+        for (memo in memosToDelete) {
+            tagRepository.deleteByMemoId(memo.id!!)
+            memoRepository.deleteById(memo.id)
+        }
     }
 }

@@ -9,4 +9,6 @@ interface TagRepository : JpaRepository<Tag, Int> {
     fun findByContentContaining(content: String): List<Tag>
 
     fun existsByMemoIdAndContent(memoId: Int, content: String): Boolean
+
+    fun deleteByMemoId(memoId: Int)
 }
