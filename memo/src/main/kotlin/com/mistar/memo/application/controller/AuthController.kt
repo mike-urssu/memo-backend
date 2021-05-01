@@ -1,5 +1,6 @@
 package com.mistar.memo.application.controller
 
+import com.mistar.memo.application.request.UserSignInRequest
 import com.mistar.memo.application.request.UserSignupRequest
 import com.mistar.memo.domain.service.AuthService
 import io.swagger.annotations.ApiOperation
@@ -24,5 +25,16 @@ class AuthController(
         logger.info("/v1/auth/signup")
 
         return authService.signup(userSignupRequest.toUserSignupDto())
+    }
+
+    @ApiOperation("로그인하기")
+    @PostMapping("/signin")
+    @ResponseStatus(HttpStatus.OK)
+    fun signin(
+        @RequestBody userSignInRequest: UserSignInRequest
+    ) {
+        logger.info("/v1/auth/signin")
+
+        return authService.signIn(userSignInRequest.toUserSignInDto())
     }
 }
