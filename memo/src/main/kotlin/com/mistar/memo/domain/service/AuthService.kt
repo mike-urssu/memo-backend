@@ -1,7 +1,10 @@
 package com.mistar.memo.domain.service
 
 import com.mistar.memo.core.common.Salt
+import com.mistar.memo.domain.exception.InvalidPasswordException
 import com.mistar.memo.domain.exception.UserAlreadyExistsException
+import com.mistar.memo.domain.exception.UsernameNotFoundException
+import com.mistar.memo.domain.model.dto.UserSignInDto
 import com.mistar.memo.domain.model.dto.UserSignupDto
 import com.mistar.memo.domain.model.entity.User
 import com.mistar.memo.domain.model.repository.UserRepository
@@ -20,5 +23,11 @@ class AuthService(
             password = Salt.encryptPassword(userSignupDto.password)
         )
         userRepository.save(user)
+    }
+
+    fun signIn(userSignInDto: UserSignInDto) {
+        val user = userRepository.findByUsername(userSignInDto.username).orElseThrow { UsernameNotFoundException() }
+        if (!Salt.matchPassword(userSignInDto.password, user.password))
+            throw InvalidPasswordException()
     }
 }

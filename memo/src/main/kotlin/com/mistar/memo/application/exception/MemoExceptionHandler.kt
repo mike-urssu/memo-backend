@@ -1,10 +1,7 @@
 package com.mistar.memo.application.exception
 
 import com.mistar.memo.core.response.ErrorResponse
-import com.mistar.memo.domain.exception.InvalidPageException
-import com.mistar.memo.domain.exception.MemoNotFoundException
-import com.mistar.memo.domain.exception.PageOutOfBoundsException
-import com.mistar.memo.domain.exception.UserAlreadyExistsException
+import com.mistar.memo.domain.exception.*
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -37,5 +34,17 @@ class MemoExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleUserAlreadyExists(exception: UserAlreadyExistsException): ErrorResponse {
         return ErrorResponse(HttpStatus.CONFLICT, "Auth-001", exception.message!!)
+    }
+
+    @ExceptionHandler(UsernameNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleUsernameNotFound(exception: UsernameNotFoundException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, "Auth-002", exception.message!!)
+    }
+
+    @ExceptionHandler(InvalidPasswordException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleInvalidPassword(exception: InvalidPasswordException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Auth-003", exception.message!!)
     }
 }
