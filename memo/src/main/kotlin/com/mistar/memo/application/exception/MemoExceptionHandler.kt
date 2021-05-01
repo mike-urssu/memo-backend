@@ -4,6 +4,7 @@ import com.mistar.memo.core.response.ErrorResponse
 import com.mistar.memo.domain.exception.InvalidPageException
 import com.mistar.memo.domain.exception.MemoNotFoundException
 import com.mistar.memo.domain.exception.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.UserAlreadyExistsException
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -30,5 +31,11 @@ class MemoExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleMemoNotFound(exception: MemoNotFoundException): ErrorResponse {
         return ErrorResponse(HttpStatus.NOT_FOUND, "Memo-001", exception.message!!)
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleUserAlreadyExists(exception: UserAlreadyExistsException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Auth-001", exception.message!!)
     }
 }

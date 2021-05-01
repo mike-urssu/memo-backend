@@ -28,6 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("org.mindrot:jbcrypt:0.3m")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     // runtimeOnly("dev.miku:r2dbc-mysql")
     runtimeOnly("mysql:mysql-connector-java")

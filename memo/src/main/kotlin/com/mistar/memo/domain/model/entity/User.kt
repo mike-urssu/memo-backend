@@ -8,12 +8,12 @@ import javax.persistence.*
 data class User(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int?,
+    val id: Int? = null,
 
     @Column(nullable = false)
     val username: String,
 
-    @Column(nullable = false, length = 256)
+    @Column(nullable = false, length = 60)
     val password: String,
 
     var role: Int = 1,
@@ -25,5 +25,5 @@ data class User(
     val deletedAt: LocalDateTime? = null,
 
     @OneToMany
-    val memos: MutableSet<Memo>
+    val memos: MutableSet<Memo> = mutableSetOf()
 )
