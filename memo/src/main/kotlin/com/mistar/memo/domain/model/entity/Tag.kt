@@ -12,6 +12,6 @@ data class Tag(
     @Column
     var memoId: Int?,
 
-    @Column(length = 50)
+    @Column(nullable = false, length = 50)
     val content: String
 )

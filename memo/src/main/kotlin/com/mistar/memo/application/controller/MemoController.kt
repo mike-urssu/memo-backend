@@ -31,6 +31,7 @@ class MemoController(
 
     @ApiOperation("모든 메모 불러오기")
     @GetMapping("/list/{page}")
+    @ResponseStatus(HttpStatus.OK)
     fun selectAllMemos(
         @PathVariable page: Int
     ): MemoResponse {
@@ -42,6 +43,7 @@ class MemoController(
 
     @ApiOperation("특정 id의 메모 불러오기")
     @GetMapping("/{memoId}")
+    @ResponseStatus(HttpStatus.OK)
     fun selectMemosById(
         @PathVariable memoId: Int,
     ): MemoResponse {
@@ -53,6 +55,7 @@ class MemoController(
 
     @ApiOperation("태그가 동일한 메모 불러오기")
     @GetMapping("/list/{page}/tags/{tag}")
+    @ResponseStatus(HttpStatus.OK)
     fun selectMemosByTag(
         @PathVariable tag: String,
         @PathVariable page: Int
@@ -65,6 +68,7 @@ class MemoController(
 
     @ApiOperation("메모 수정하기")
     @PatchMapping("/patch/{memoId}")
+    @ResponseStatus(HttpStatus.OK)
     fun patchMemo(
         @PathVariable memoId: Int,
         @RequestBody memoPatchRequest: MemoPatchRequest
@@ -77,6 +81,7 @@ class MemoController(
 
     @ApiOperation("메모 삭제하기")
     @DeleteMapping("/delete/{memoId}")
+    @ResponseStatus(HttpStatus.OK)
     fun deleteMemo(
         @PathVariable memoId: Int
     ) {

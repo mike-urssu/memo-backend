@@ -1,7 +1,6 @@
 package com.mistar.memo.domain.model.entity
 
 import org.hibernate.annotations.DynamicUpdate
-import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -13,24 +12,20 @@ data class Memo(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
-    @Column
+    @Column(length = 100)
     var title: String? = null,
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     var content: String,
 
-    @Column
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column
     var isPublic: Boolean = true,
 
-    @Column
     var isDeleted: Boolean = false,
 
-    @Column
-    var deletedAt: LocalDateTime = LocalDateTime.now(),
+    var deletedAt: LocalDateTime? = null,
 
-    @OneToMany(mappedBy = "memoId")
-    var tags: MutableSet<Tag>
+    @OneToMany(mappedBy = "memoId", fetch = FetchType.EAGER)
+    var tags: MutableSet<Tag>,
 )
