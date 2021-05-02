@@ -1,6 +1,8 @@
 package com.mistar.memo.domain.service
 
 import com.mistar.memo.core.common.Salt
+import com.mistar.memo.application.response.AccessToken
+import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.domain.exception.InvalidPasswordException
 import com.mistar.memo.domain.exception.UserAlreadyExistsException
 import com.mistar.memo.domain.exception.UsernameNotFoundException
@@ -12,7 +14,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
     fun signup(userSignupDto: UserSignupDto) {
         if (userRepository.existsByUsername(userSignupDto.username))
@@ -25,9 +28,10 @@ class AuthService(
         userRepository.save(user)
     }
 
-    fun signIn(userSignInDto: UserSignInDto) {
+    fun signIn(userSignInDto: UserSignInDto): AccessToken {
         val user = userRepository.findByUsername(userSignInDto.username).orElseThrow { UsernameNotFoundException() }
         if (!Salt.matchPassword(userSignInDto.password, user.password))
             throw InvalidPasswordException()
+        return jwtTokenProvider.generateAccessToken(user.id!!, user.getUserRoles())
     }
 }
