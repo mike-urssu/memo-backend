@@ -1,4 +1,4 @@
-package com.mistar.memo.core.common
+package com.mistar.memo.core.utils
 
 import java.security.MessageDigest
 import kotlin.experimental.and

@@ -3,12 +3,15 @@ package com.mistar.memo.application.controller
 import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
+import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/v1/memos")
