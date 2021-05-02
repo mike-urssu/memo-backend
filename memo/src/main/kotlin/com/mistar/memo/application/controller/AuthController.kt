@@ -2,7 +2,6 @@ package com.mistar.memo.application.controller
 
 import com.mistar.memo.application.request.UserSignInRequest
 import com.mistar.memo.application.request.UserSignupRequest
-import com.mistar.memo.application.response.AccessToken
 import com.mistar.memo.domain.service.AuthService
 import io.swagger.annotations.ApiOperation
 import org.slf4j.Logger
@@ -33,7 +32,7 @@ class AuthController(
     @ResponseStatus(HttpStatus.OK)
     fun signIn(
         @RequestBody userSignInRequest: UserSignInRequest
-    ): AccessToken {
+    ): String {
         logger.info("/v1/auth/signin")
 
         return authService.signIn(userSignInRequest.toUserSignInDto())

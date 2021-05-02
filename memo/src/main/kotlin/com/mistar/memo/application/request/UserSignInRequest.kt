@@ -1,6 +1,6 @@
 package com.mistar.memo.application.request
 
-import com.mistar.memo.core.common.SHA256
+import com.mistar.memo.core.utils.SHA256
 import com.mistar.memo.domain.model.dto.UserSignInDto
 
 class UserSignInRequest(
