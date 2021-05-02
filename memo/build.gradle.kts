@@ -29,7 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("org.mindrot:jbcrypt:0.3m")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+//    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt-api:0.10.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.10.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.10.5")

@@ -2,7 +2,7 @@ package com.mistar.memo.application.controller
 
 import com.mistar.memo.application.request.UserSignInRequest
 import com.mistar.memo.application.request.UserSignupRequest
-import com.mistar.memo.core.security.AccessToken
+import com.mistar.memo.application.response.AccessToken
 import com.mistar.memo.domain.service.AuthService
 import io.swagger.annotations.ApiOperation
 import org.slf4j.Logger

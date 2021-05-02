@@ -1,7 +1,7 @@
 package com.mistar.memo.domain.service
 
 import com.mistar.memo.core.common.Salt
-import com.mistar.memo.core.security.AccessToken
+import com.mistar.memo.application.response.AccessToken
 import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.domain.exception.InvalidPasswordException
 import com.mistar.memo.domain.exception.UserAlreadyExistsException

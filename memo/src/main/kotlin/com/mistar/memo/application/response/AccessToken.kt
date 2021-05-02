@@ -1,4 +1,4 @@
-package com.mistar.memo.core.security
+package com.mistar.memo.application.response
 
 data class AccessToken(
     val token: String,

@@ -1,18 +1,13 @@
 package com.mistar.memo.core.security
 
+import com.mistar.memo.application.response.AccessToken
 import com.mistar.memo.domain.model.enums.UserRole
-import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import java.util.*
-import java.util.stream.Collectors
 
 @Component
 class JwtTokenProvider(
@@ -43,12 +38,12 @@ class JwtTokenProvider(
 //        return getClaimsFromToken(token)["id"].toString().toInt()
 //    }
 
-    fun getClaimsFromToken(token: String): Claims {
-        return Jwts.parser()
-            .setSigningKey(secretKey)
-            .parseClaimsJws(token)
-            .body
-    }
+//    fun getClaimsFromToken(token: String): Claims {
+//        return Jwts.parser()
+//            .setSigningKey(secretKey)
+//            .parseClaimsJws(token)
+//            .body
+//    }
 
 //    fun getAuthorization(claims: Claims): Authentication {
 //        return UsernamePasswordAuthenticationToken(claims["id"], "")
