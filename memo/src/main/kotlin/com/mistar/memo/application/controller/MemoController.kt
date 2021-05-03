@@ -3,15 +3,13 @@ package com.mistar.memo.application.controller
 import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
-import com.mistar.memo.core.security.JwtTokenProvider
+import com.mistar.memo.core.utils.ControllerUtils
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/v1/memos")
@@ -28,8 +26,9 @@ class MemoController(
     ) {
         logger.info("/v1/memos/post")
 
+        val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPostDto = memoPostRequest.toMemoPostDto()
-        return memoService.createMemo(memoPostDto)
+        return memoService.createMemo(userId, memoPostDto)
     }
 
     @ApiOperation("모든 메모 불러오기")
@@ -40,7 +39,8 @@ class MemoController(
     ): MemoResponse {
         logger.info("/v1/memos/list/$page")
 
-        val memos = memoService.selectAllMemos(page)
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        val memos = memoService.selectAllMemos(userId, page)
         return MemoResponse(memos)
     }
 
@@ -52,7 +52,8 @@ class MemoController(
     ): MemoResponse {
         logger.info("/v1/memos/$memoId")
 
-        val memos = memoService.selectMemosById(memoId)
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        val memos = memoService.selectMemosById(userId, memoId)
         return MemoResponse(memos)
     }
 
@@ -65,7 +66,8 @@ class MemoController(
     ): MemoResponse {
         logger.info("/v1/memos/list/$page/tag/$tag")
 
-        val memos = memoService.selectMemosByTag(tag, page)
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        val memos = memoService.selectMemosByTag(userId, tag, page)
         return MemoResponse(memos)
     }
 
@@ -78,8 +80,9 @@ class MemoController(
     ) {
         logger.info("/v1/memos/patch/$memoId")
 
+        val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPatchDto = memoPatchRequest.toMemoPatchDto()
-        return memoService.patchMemo(memoId, memoPatchDto)
+        return memoService.patchMemo(userId, memoId, memoPatchDto)
     }
 
     @ApiOperation("메모 삭제하기")
@@ -90,6 +93,7 @@ class MemoController(
     ) {
         logger.info("/v1/memos/delete/$memoId")
 
-        return memoService.deleteMemo(memoId)
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        return memoService.deleteMemo(userId, memoId)
     }
 }

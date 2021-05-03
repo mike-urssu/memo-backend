@@ -12,6 +12,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class MemoExceptionHandler {
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleUserAlreadyExists(exception: UserAlreadyExistsException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "User-001", exception.message!!)
+    }
+
+    @ExceptionHandler(UserNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleUserNotFound(exception: UserNotFoundException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, "User-002", exception.message!!)
+    }
+
+    @ExceptionHandler(InvalidPasswordException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleInvalidPassword(exception: InvalidPasswordException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "User-003", exception.message!!)
+    }
+
     @ExceptionHandler(InvalidPageException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleInvalidPage(exception: InvalidPageException): ErrorResponse {
@@ -30,21 +48,9 @@ class MemoExceptionHandler {
         return ErrorResponse(HttpStatus.NOT_FOUND, "Memo-001", exception.message!!)
     }
 
-    @ExceptionHandler(UserAlreadyExistsException::class)
+    @ExceptionHandler(UserAndMemoNotMatchedException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    fun handleUserAlreadyExists(exception: UserAlreadyExistsException): ErrorResponse {
-        return ErrorResponse(HttpStatus.CONFLICT, "Auth-001", exception.message!!)
-    }
-
-    @ExceptionHandler(UsernameNotFoundException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleUsernameNotFound(exception: UsernameNotFoundException): ErrorResponse {
-        return ErrorResponse(HttpStatus.NOT_FOUND, "Auth-002", exception.message!!)
-    }
-
-    @ExceptionHandler(InvalidPasswordException::class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    fun handleInvalidPassword(exception: InvalidPasswordException): ErrorResponse {
-        return ErrorResponse(HttpStatus.CONFLICT, "Auth-003", exception.message!!)
+    fun handleUserAndMemoNotMatched(exception: UserAndMemoNotMatchedException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Memo-002", exception.message!!)
     }
 }

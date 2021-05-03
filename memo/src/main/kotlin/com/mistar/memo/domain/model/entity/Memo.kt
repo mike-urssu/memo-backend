@@ -28,4 +28,6 @@ data class Memo(
 
     @OneToMany(mappedBy = "memoId", fetch = FetchType.EAGER)
     var tags: MutableSet<Tag>,
+
+    var userId: Int
 )

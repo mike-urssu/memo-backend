@@ -4,7 +4,7 @@ import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.core.utils.Salt
 import com.mistar.memo.domain.exception.InvalidPasswordException
 import com.mistar.memo.domain.exception.UserAlreadyExistsException
-import com.mistar.memo.domain.exception.UsernameNotFoundException
+import com.mistar.memo.domain.exception.UserNotFoundException
 import com.mistar.memo.domain.model.dto.UserSignInDto
 import com.mistar.memo.domain.model.dto.UserSignupDto
 import com.mistar.memo.domain.model.entity.User
@@ -28,7 +28,7 @@ class AuthService(
     }
 
     fun signIn(userSignInDto: UserSignInDto): String {
-        val user = userRepository.findByUsername(userSignInDto.username).orElseThrow { UsernameNotFoundException() }
+        val user = userRepository.findByUsername(userSignInDto.username).orElseThrow { UserNotFoundException() }
         if (!Salt.matchPassword(userSignInDto.password, user.password))
             throw InvalidPasswordException()
         return jwtTokenProvider.generateAccessToken(user.id!!, user.getUserRoles())

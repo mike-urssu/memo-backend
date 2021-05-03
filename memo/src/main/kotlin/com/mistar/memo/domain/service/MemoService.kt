@@ -1,9 +1,7 @@
 package com.mistar.memo.domain.service
 
 import com.mistar.memo.application.controller.MemoController
-import com.mistar.memo.domain.exception.InvalidPageException
-import com.mistar.memo.domain.exception.MemoNotFoundException
-import com.mistar.memo.domain.exception.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.*
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.MemoPatchDto
 import com.mistar.memo.domain.model.dto.MemoPostDto
@@ -11,6 +9,7 @@ import com.mistar.memo.domain.model.entity.Memo
 import com.mistar.memo.domain.model.entity.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
+import com.mistar.memo.domain.model.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -21,20 +20,23 @@ import java.time.LocalDateTime
 @Service
 class MemoService(
     private val memoRepository: MemoRepository,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val userRepository: UserRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
     private val defaultPageSize = 10
 
-    fun createMemo(memoPostDto: MemoPostDto) {
-        val memo = memoRepository.save(
-            Memo(
-                title = memoPostDto.title,
-                content = memoPostDto.content,
-                isPublic = memoPostDto.isPublic,
-                tags = memoPostDto.tags
-            )
+    fun createMemo(userId: Int, memoPostDto: MemoPostDto) {
+        val user = userRepository.findById(userId).orElseThrow { UserNotFoundException() }
+        val memo = Memo(
+            title = memoPostDto.title,
+            content = memoPostDto.content,
+            isPublic = memoPostDto.isPublic,
+            tags = memoPostDto.tags,
+            userId = user.id!!
         )
+        user.memos.add(memo)
+        memoRepository.save(memo)
         createTags(memo.id!!, memoPostDto.tags)
     }
 
@@ -45,29 +47,30 @@ class MemoService(
         }
     }
 
-    fun selectAllMemos(page: Int): List<Memo> {
+    fun selectAllMemos(userId: Int, page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
-        val memoCnt = memoRepository.findAllByIsDeletedIsFalseAndIsPublicIsTrue().size
+        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId).size
         if (memoCnt < (page - 1) * 10)
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByIsDeletedIsFalseAndIsPublicIsTrue(requestedPage).toList()
+        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId).toList()
     }
 
-    fun selectMemosById(memoId: Int): List<Memo> {
-        val memo = memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow {
-            MemoNotFoundException()
-        }
+    fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
+        val memo =
+            memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow { MemoNotFoundException() }
+        if (memo.userId != userId)
+            throw UserAndMemoNotMatchedException()
         return listOf(memo)
     }
 
-    fun selectMemosByTag(tag: String, page: Int): List<Memo> {
+    fun selectMemosByTag(userId: Int, tag: String, page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
 
-        val memoIds = getMemoIds(tag)
+        val memoIds = getMemoIds(userId, tag)
         return when {
             memoIds.size / 10 < page - 1 -> {
                 throw PageOutOfBoundsException()
@@ -83,17 +86,23 @@ class MemoService(
         }
     }
 
-    private fun getMemoIds(content: String): LinkedHashSet<Int> {
+    private fun getMemoIds(userId: Int, content: String): LinkedHashSet<Int> {
         val memoIds = linkedSetOf<Int>()
         val tags = tagRepository.findByContentContaining(content)
-        for (tag in tags)
-            memoIds.add(tag.memoId!!)
+        for (tag in tags) {
+            val memoId = tag.memoId
+            if (memoRepository.existsByUserIdAndId(userId, memoId))
+                memoIds.add(memoId)
+        }
         return memoIds
     }
 
     @Transactional
-    fun patchMemo(memoId: Int, memoPatchDto: MemoPatchDto) {
+    fun patchMemo(userId: Int, memoId: Int, memoPatchDto: MemoPatchDto) {
         val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
+        if (memo.userId != userId)
+            throw UserAndMemoNotMatchedException()
+
         if (memoPatchDto.title != null)
             memo.title = memoPatchDto.title
         if (memoPatchDto.content != null)
@@ -133,12 +142,13 @@ class MemoService(
         }
     }
 
-    fun deleteMemo(memoId: Int) {
-        val memo = memoRepository.findById(memoId).orElseThrow {
-            MemoNotFoundException()
-        }
+    fun deleteMemo(userId: Int, memoId: Int) {
+        val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
+        if (memo.id != userId)
+            throw UserAndMemoNotMatchedException()
 
         memo.isDeleted = true
+        memo.deletedAt = LocalDateTime.now()
         memoRepository.save(memo)
     }
 
