@@ -9,8 +9,7 @@ data class Tag(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 
-    @Column
-    var memoId: Int?,
+    var memoId: Int,
 
     @Column(nullable = false, length = 50)
     val content: String

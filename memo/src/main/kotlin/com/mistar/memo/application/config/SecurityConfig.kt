@@ -28,6 +28,7 @@ class SecurityConfig(
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
             .antMatchers("/v1/auth/**").permitAll()
+            .antMatchers("/v1/memos/**").hasRole("USER")
             .anyRequest().hasRole("USER")
             .and()
             .addFilterBefore(

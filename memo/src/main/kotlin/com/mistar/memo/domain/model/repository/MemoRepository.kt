@@ -9,11 +9,13 @@ import java.util.*
 
 @Repository
 interface MemoRepository : JpaRepository<Memo, Int> {
-    fun findAllByIsDeletedIsFalseAndIsPublicIsTrue(): List<Memo>
+    fun findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId: Int): List<Memo>
 
-    fun findAllByIsDeletedIsFalseAndIsPublicIsTrue(page: Pageable): List<Memo>
+    fun findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(page: Pageable, userId: Int): List<Memo>
 
     fun findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId: Int): Optional<Memo>
 
     fun findAllByDeletedAtBeforeAndIsDeletedIsTrue(now: LocalDateTime): List<Memo>
+
+    fun existsByUserIdAndId(userId: Int, memoId: Int): Boolean
 }
