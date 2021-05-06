@@ -1,7 +1,6 @@
 package com.mistar.memo.application.request
 
 import com.mistar.memo.domain.model.dto.MemoPatchDto
-import com.mistar.memo.domain.model.dto.MemoPostDto
 import com.mistar.memo.domain.model.entity.Tag
 
 class MemoPatchRequest(
@@ -18,7 +17,7 @@ class MemoPatchRequest(
         if (this.tags.isNullOrEmpty())
             return MemoPatchDto(title, content, isPublic, tags)
         for (tag in this.tags)
-            tags.add(Tag(memoId = null, content = tag))
+            tags.add(Tag(content = tag))
         return MemoPatchDto(title, content, isPublic, tags)
     }
 }

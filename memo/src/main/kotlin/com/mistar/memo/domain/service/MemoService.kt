@@ -91,7 +91,7 @@ class MemoService(
         val tags = tagRepository.findByContentContaining(content)
         for (tag in tags) {
             val memoId = tag.memoId
-            if (memoRepository.existsByUserIdAndId(userId, memoId))
+            if (memoRepository.existsByUserIdAndId(userId, memoId!!))
                 memoIds.add(memoId)
         }
         return memoIds

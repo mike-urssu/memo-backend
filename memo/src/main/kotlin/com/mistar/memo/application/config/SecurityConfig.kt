@@ -29,7 +29,8 @@ class SecurityConfig(
             .antMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
             .antMatchers("/v1/auth/**").permitAll()
             .antMatchers("/v1/memos/**").hasRole("USER")
-            .anyRequest().hasRole("USER")
+            .antMatchers("/v1/admin/**").hasRole("ADMIN")
+            .anyRequest().hasRole("ADMIN")
             .and()
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenProvider, objectMapper),
