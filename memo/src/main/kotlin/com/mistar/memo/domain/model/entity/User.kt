@@ -23,9 +23,9 @@ data class User(
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    val isDeleted: Boolean = false,
+    var isDeleted: Boolean = false,
 
-    val deletedAt: LocalDateTime? = null,
+    var deletedAt: LocalDateTime? = null,
 
     @OneToMany(mappedBy = "userId")
     val memos: MutableSet<Memo> = mutableSetOf()

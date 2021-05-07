@@ -15,4 +15,6 @@ interface UserRepository : JpaRepository<User, Int> {
     fun findAllByIsDeletedIsFalse(page: Pageable): List<User>
 
     fun countByIsDeletedIsFalse(): Long
+
+    fun findByIdAndIsDeletedIsFalse(userId: Int): Optional<User>
 }
