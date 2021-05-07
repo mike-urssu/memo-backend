@@ -5,6 +5,7 @@ import com.mistar.memo.domain.exception.PageOutOfBoundsException
 import com.mistar.memo.domain.exception.UserNotFoundException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.UserInfoDto
+import com.mistar.memo.domain.model.entity.Role
 import com.mistar.memo.domain.model.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -32,8 +33,15 @@ class AdminService(
 
     fun deleteUser(userId: Int) {
         val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        user.roleFlag = 1
         user.isDeleted = true
         user.deletedAt = LocalDateTime.now()
+        userRepository.save(user)
+    }
+
+    fun grantRole(userId: Int) {
+        val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        user.roleFlag += Role.Flag.ADMIN.value
         userRepository.save(user)
     }
 }

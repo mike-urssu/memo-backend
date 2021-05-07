@@ -35,4 +35,15 @@ class AdminController(
 
         return adminService.deleteUser(userId)
     }
+
+    @ApiOperation("관리자 권한 부여")
+    @PostMapping("/users/grant/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun grantRole(
+        @PathVariable userId: Int
+    ) {
+        logger.info("/v1/admin/users/grant/$userId")
+
+        return adminService.grantRole(userId)
+    }
 }
