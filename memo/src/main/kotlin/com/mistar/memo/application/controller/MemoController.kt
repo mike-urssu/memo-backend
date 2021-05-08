@@ -6,8 +6,6 @@ import com.mistar.memo.application.response.MemoResponse
 import com.mistar.memo.core.utils.ControllerUtils
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -16,16 +14,12 @@ import org.springframework.web.bind.annotation.*
 class MemoController(
     private val memoService: MemoService
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
-
     @ApiOperation("메모 생성하기")
     @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
     fun createMemo(
         @RequestBody memoPostRequest: MemoPostRequest
     ) {
-        logger.info("/v1/memos/post")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPostDto = memoPostRequest.toMemoPostDto()
         return memoService.createMemo(userId, memoPostDto)
@@ -37,8 +31,6 @@ class MemoController(
     fun selectAllMemos(
         @PathVariable page: Int
     ): MemoResponse {
-        logger.info("/v1/memos/list/$page")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectAllMemos(userId, page)
         return MemoResponse(memos)
@@ -50,8 +42,6 @@ class MemoController(
     fun selectMemosById(
         @PathVariable memoId: Int,
     ): MemoResponse {
-        logger.info("/v1/memos/$memoId")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectMemosById(userId, memoId)
         return MemoResponse(memos)
@@ -64,8 +54,6 @@ class MemoController(
         @PathVariable tag: String,
         @PathVariable page: Int
     ): MemoResponse {
-        logger.info("/v1/memos/list/$page/tag/$tag")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectMemosByTag(userId, tag, page)
         return MemoResponse(memos)
@@ -78,8 +66,6 @@ class MemoController(
         @PathVariable memoId: Int,
         @RequestBody memoPatchRequest: MemoPatchRequest
     ) {
-        logger.info("/v1/memos/patch/$memoId")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPatchDto = memoPatchRequest.toMemoPatchDto()
         return memoService.patchMemo(userId, memoId, memoPatchDto)
@@ -91,8 +77,6 @@ class MemoController(
     fun deleteMemo(
         @PathVariable memoId: Int
     ) {
-        logger.info("/v1/memos/delete/$memoId")
-
         val userId = ControllerUtils.getUserIdFromAuthentication()
         return memoService.deleteMemo(userId, memoId)
     }

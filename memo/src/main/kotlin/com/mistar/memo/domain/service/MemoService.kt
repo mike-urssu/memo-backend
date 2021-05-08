@@ -1,6 +1,5 @@
 package com.mistar.memo.domain.service
 
-import com.mistar.memo.application.controller.MemoController
 import com.mistar.memo.domain.exception.*
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.MemoPatchDto
@@ -10,8 +9,6 @@ import com.mistar.memo.domain.model.entity.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +20,6 @@ class MemoService(
     private val tagRepository: TagRepository,
     private val userRepository: UserRepository
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
     private val defaultPageSize = 10
 
     fun createMemo(userId: Int, memoPostDto: MemoPostDto) {
@@ -55,7 +51,7 @@ class MemoService(
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId).toList()
+        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId)
     }
 
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
@@ -134,7 +130,6 @@ class MemoService(
     private fun saveTags(memo: Memo, memoPatchDto: MemoPatchDto) {
         for (tag in memoPatchDto.tags) {
             if (!tagRepository.existsByMemoIdAndContent(memo.id!!, tag.content)) {
-                logger.info(tag.content)
                 memo.tags.add(tag)
                 tag.memoId = memo.id
                 tagRepository.save(tag)
@@ -153,14 +148,14 @@ class MemoService(
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 2 * * *")
-    fun deleteMemos() {
-        logger.info("${LocalDateTime.now()}     execute scheduled job - delete memos")
-        val now = LocalDateTime.now().minusSeconds(10)
+    @Scheduled(cron = "0 0 0 * * *")
+    fun deleteMemosByCron(): Int {
+        val now = LocalDateTime.now().minusDays(7)
         val memosToDelete = memoRepository.findAllByDeletedAtBeforeAndIsDeletedIsTrue(now)
         for (memo in memosToDelete) {
             tagRepository.deleteByMemoId(memo.id!!)
             memoRepository.deleteById(memo.id)
         }
+        return memosToDelete.size
     }
 }
