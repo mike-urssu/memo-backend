@@ -18,4 +18,6 @@ interface MemoRepository : JpaRepository<Memo, Int> {
     fun findAllByDeletedAtBeforeAndIsDeletedIsTrue(now: LocalDateTime): List<Memo>
 
     fun existsByUserIdAndId(userId: Int, memoId: Int): Boolean
+
+    fun findByIdAndIsDeletedIsFalse(memoId: Int): Optional<Memo>
 }

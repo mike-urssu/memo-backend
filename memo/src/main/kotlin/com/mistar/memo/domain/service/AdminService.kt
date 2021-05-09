@@ -1,18 +1,21 @@
 package com.mistar.memo.domain.service
 
 import com.mistar.memo.domain.exception.InvalidPageException
+import com.mistar.memo.domain.exception.MemoNotFoundException
 import com.mistar.memo.domain.exception.PageOutOfBoundsException
 import com.mistar.memo.domain.exception.UserNotFoundException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.UserInfoDto
 import com.mistar.memo.domain.model.entity.Role
+import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
 class AdminService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val memoRepository: MemoRepository
 ) {
     private final val defaultPageSize = 10
 
@@ -43,5 +46,12 @@ class AdminService(
         val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
         user.roleFlag += Role.Flag.ADMIN.value
         userRepository.save(user)
+    }
+
+    fun deleteMemo(memoId: Int) {
+        val memo = memoRepository.findByIdAndIsDeletedIsFalse(memoId).orElseThrow { MemoNotFoundException() }
+        memo.isDeleted = true
+        memo.deletedAt = LocalDateTime.now()
+        memoRepository.save(memo)
     }
 }

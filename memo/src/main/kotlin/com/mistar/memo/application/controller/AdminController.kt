@@ -59,4 +59,20 @@ class AdminController(
     ) {
         return adminService.grantRole(userId)
     }
+
+    @ApiOperation("특정 사용자의 메모 삭제")
+    @ApiResponses(
+        ApiResponse(code = 204, message = "메모 삭제 성공"),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
+        ApiResponse(code = 404, message = "해당 id의 메모 없음")
+    )
+    @DeleteMapping("/memos/{memoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteMemo(
+        @PathVariable memoId: Int
+    ) {
+        return adminService.deleteMemo(memoId)
+    }
 }
