@@ -20,7 +20,6 @@ class GeneralExceptionHandler {
         return ErrorResponse(HttpStatus.BAD_REQUEST, "System-001", "wrong request body")
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleRequestValid(exception: MethodArgumentNotValidException): ErrorResponse {

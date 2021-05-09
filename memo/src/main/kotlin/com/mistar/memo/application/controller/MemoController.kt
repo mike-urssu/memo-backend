@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.*
 class MemoController(
     private val memoService: MemoService
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(MemoController::class.java)
-
     @ApiOperation("메모 작성하기")
     @ApiResponses(
         ApiResponse(code = 201, message = "메모 작성 성공"),
-        ApiResponse(code = 400, message = "잘못된 요청")
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
     )
     @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,7 +38,9 @@ class MemoController(
     @ApiOperation("모든 메모 불러오기")
     @ApiResponses(
         ApiResponse(code = 200, message = "모든 메모 조회 성공", response = MemoResponse::class),
-        ApiResponse(code = 400, message = "잘못된 요청")
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
     )
     @GetMapping("/list/{page}")
     @ResponseStatus(HttpStatus.OK)
@@ -54,6 +56,8 @@ class MemoController(
     @ApiResponses(
         ApiResponse(code = 200, message = "해당 id의 메모 조회 성공", response = MemoResponse::class),
         ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
         ApiResponse(code = 404, message = "해당 id의 메모 없음")
     )
     @GetMapping("/{memoId}")
@@ -69,7 +73,9 @@ class MemoController(
     @ApiOperation("태그가 동일한 메모 불러오기")
     @ApiResponses(
         ApiResponse(code = 200, message = "동일 태그에 대한 메모 조회 성공", response = MemoResponse::class),
-        ApiResponse(code = 400, message = "잘못된 요청")
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
     )
     @GetMapping("/list/{page}/tags/{tag}")
     @ResponseStatus(HttpStatus.OK)
@@ -86,6 +92,8 @@ class MemoController(
     @ApiResponses(
         ApiResponse(code = 200, message = "메모 수정 성공"),
         ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
         ApiResponse(code = 404, message = "해당 id의 메모 없음")
     )
     @PutMapping("/patch/{memoId}")
@@ -103,6 +111,8 @@ class MemoController(
     @ApiResponses(
         ApiResponse(code = 204, message = "메모 삭제 성공"),
         ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
         ApiResponse(code = 404, message = "해당 id의 메모 없음")
     )
     @DeleteMapping("/delete/{memoId}")

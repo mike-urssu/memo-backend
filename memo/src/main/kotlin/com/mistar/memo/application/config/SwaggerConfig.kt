@@ -12,7 +12,6 @@ import springfox.documentation.spring.web.plugins.Docket
 @Configuration
 @EnableOpenApi
 class SwaggerConfig {
-
     @Bean
     fun api(): Docket {
         return Docket(DocumentationType.OAS_30)
