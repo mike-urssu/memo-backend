@@ -89,10 +89,25 @@ class AdminController(
     )
     @GetMapping("/users/{userId}/memos/{page}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun getAllMemos(
+    fun getAllMemosByUserId(
         @PathVariable userId: Int,
         @PathVariable page: Int
     ): List<Memo> {
         return memoService.selectAllMemos(userId, page)
+    }
+
+    @ApiOperation("모든 메모 조회")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "메모 조회 성공"),
+        ApiResponse(code = 400, message = "잘못된 페이지 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
+    )
+    @GetMapping("/memos/{page}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getAllMemos(
+        @PathVariable page: Int
+    ): List<Memo> {
+        return memoService.selectAllMemos(page)
     }
 }

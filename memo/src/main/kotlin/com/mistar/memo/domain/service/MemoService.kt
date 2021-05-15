@@ -43,6 +43,17 @@ class MemoService(
         }
     }
 
+    fun selectAllMemos(page: Int): List<Memo> {
+        if (page < 1)
+            throw InvalidPageException()
+        val memoCnt = memoRepository.findAllByIsDeletedIsFalse().size
+        if (memoCnt < (page - 1) * 10)
+            throw PageOutOfBoundsException()
+
+        val requestedPage = Page(page - 1, defaultPageSize)
+        return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
+    }
+
     fun selectAllMemos(userId: Int, page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
