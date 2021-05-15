@@ -2,6 +2,7 @@ package com.mistar.memo.application.controller
 
 import com.mistar.memo.domain.model.dto.UserInfoDto
 import com.mistar.memo.domain.model.entity.Memo
+import com.mistar.memo.domain.model.entity.Tag
 import com.mistar.memo.domain.service.AdminService
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation
@@ -143,5 +144,20 @@ class AdminController(
         @PathVariable tag: String
     ): List<Memo> {
         return memoService.selectMemosByTag(tag, page)
+    }
+
+    @ApiOperation("사용된 태그를 내림차순으로 n개 조회")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "태그 조회 성공"),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
+    )
+    @GetMapping("/tags/{count}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTagsDescending(
+        @PathVariable count: Int
+    ): List<Tag> {
+        return adminService.getTagsDescending(count)
     }
 }

@@ -7,7 +7,9 @@ import com.mistar.memo.domain.exception.UserNotFoundException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.UserInfoDto
 import com.mistar.memo.domain.model.entity.Role
+import com.mistar.memo.domain.model.entity.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
+import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -15,7 +17,8 @@ import java.time.LocalDateTime
 @Service
 class AdminService(
     private val userRepository: UserRepository,
-    private val memoRepository: MemoRepository
+    private val memoRepository: MemoRepository,
+    private val tagRepository: TagRepository
 ) {
     private final val defaultPageSize = 10
 
@@ -53,5 +56,10 @@ class AdminService(
         memo.isDeleted = true
         memo.deletedAt = LocalDateTime.now()
         memoRepository.save(memo)
+    }
+
+    fun getTagsDescending(count: Int): List<Tag> {
+        val requestedPage = Page(0, count)
+        return tagRepository.findTagsOrderByContentDesc(requestedPage)
     }
 }

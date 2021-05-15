@@ -37,7 +37,7 @@
 2. 메모 구현
     - 특정 사용자의 메모를 **삭제**하는 api를 구현해야 한다. : `DELETE /v1/admin/memos/{memoId}`
     - 특정 사용자의 **모든 메모를 보는** api를 구현해야 한다. : `GET /v1/admin/users/{userId}/memos/{page}`
-    - 특정 사용자의 **태그가 동일한 메모를 보는** api를 구현해야 한다. : `GET /v1/admin/users/{userId}/tag/{tag}`
+    - 특정 사용자의 **태그가 동일한 메모를 보는** api를 구현해야 한다. : `GET /v1/admin"/users/{userId}/page/{page}/tag/{tag}"`
     - **모든 메모를 보는** api를 구현해야 한다. : `GET /v1/admin/memos/{page}`
     - **태그가 동일한 모든 메모를 보는** api를 구현해야 한다. : `GET /v1/admin/memos/{page}/tag/{tag}`
     - **사용된 태그를 내림차순으로 n개**를 얻을 수 있어야 한다. : `GET /v1/admin/tags/{count}`
