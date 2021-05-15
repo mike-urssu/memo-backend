@@ -43,6 +43,17 @@ class MemoService(
         }
     }
 
+    fun selectAllMemos(page: Int): List<Memo> {
+        if (page < 1)
+            throw InvalidPageException()
+        val memoCnt = memoRepository.findAllByIsDeletedIsFalse().size
+        if (memoCnt < (page - 1) * 10)
+            throw PageOutOfBoundsException()
+
+        val requestedPage = Page(page - 1, defaultPageSize)
+        return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
+    }
+
     fun selectAllMemos(userId: Int, page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
@@ -88,6 +99,37 @@ class MemoService(
         for (tag in tags) {
             val memoId = tag.memoId
             if (memoRepository.existsByUserIdAndId(userId, memoId!!))
+                memoIds.add(memoId)
+        }
+        return memoIds
+    }
+
+    fun selectMemosByTag(tag: String, page: Int): List<Memo> {
+        if (page < 1)
+            throw InvalidPageException()
+
+        val memoIds = getMemoIds(tag)
+        return when {
+            memoIds.size / 10 < page - 1 -> {
+                throw PageOutOfBoundsException()
+            }
+            memoIds.size / 10 == page - 1 -> {
+                memoRepository.findAllById(memoIds)
+                    .subList((page - 1) * defaultPageSize, (page - 1) * defaultPageSize + (memoIds.size % 10))
+            }
+            else -> {
+                memoRepository.findAllById(memoIds)
+                    .subList((page - 1) * defaultPageSize, page * defaultPageSize)
+            }
+        }
+    }
+
+    private fun getMemoIds(content: String): LinkedHashSet<Int> {
+        val memoIds = linkedSetOf<Int>()
+        val tags = tagRepository.findByContentContaining(content)
+        for (tag in tags) {
+            val memoId = tag.memoId
+            if (memoRepository.existsById(memoId!!))
                 memoIds.add(memoId)
         }
         return memoIds

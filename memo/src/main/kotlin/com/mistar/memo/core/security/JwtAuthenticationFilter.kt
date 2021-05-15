@@ -22,7 +22,6 @@ class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider,
     private val objectMapper: ObjectMapper
 ) : GenericFilterBean() {
-
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
         try {

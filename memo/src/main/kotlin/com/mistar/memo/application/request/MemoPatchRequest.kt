@@ -5,11 +5,8 @@ import com.mistar.memo.domain.model.entity.Tag
 
 class MemoPatchRequest(
     private val title: String?,
-
     private val content: String?,
-
     private val isPublic: Boolean?,
-
     private val tags: List<String>?
 ) {
     fun toMemoPatchDto(): MemoPatchDto {

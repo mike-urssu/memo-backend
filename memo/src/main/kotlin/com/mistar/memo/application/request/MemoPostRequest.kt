@@ -5,11 +5,8 @@ import com.mistar.memo.domain.model.entity.Tag
 
 class MemoPostRequest(
     private val title: String?,
-
     private val content: String,
-
     private val isPublic: Boolean = true,
-
     private val tags: List<String>
 ) {
     fun toMemoPostDto(): MemoPostDto {

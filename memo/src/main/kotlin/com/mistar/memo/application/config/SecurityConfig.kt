@@ -16,7 +16,6 @@ class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val objectMapper: ObjectMapper
 ) : WebSecurityConfigurerAdapter() {
-
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.httpBasic().disable()
