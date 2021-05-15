@@ -20,4 +20,8 @@ interface MemoRepository : JpaRepository<Memo, Int> {
     fun existsByUserIdAndId(userId: Int, memoId: Int): Boolean
 
     fun findByIdAndIsDeletedIsFalse(memoId: Int): Optional<Memo>
+
+    fun findAllByIsDeletedIsFalse(): List<Memo>
+
+    fun findAllByIsDeletedIsFalse(page: Pageable): List<Memo>
 }
