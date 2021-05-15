@@ -110,4 +110,20 @@ class AdminController(
     ): List<Memo> {
         return memoService.selectAllMemos(page)
     }
+
+    @ApiOperation("태그가 동일한 모든 메모 조회")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "메모 조회 성공"),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음")
+    )
+    @GetMapping("/memos/{page}/tag/{tag}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getAllMemosByTag(
+        @PathVariable page: Int,
+        @PathVariable tag: String
+    ): List<Memo> {
+        return memoService.selectMemosByTag(tag, page)
+    }
 }
