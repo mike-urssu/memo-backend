@@ -96,6 +96,24 @@ class AdminController(
         return memoService.selectAllMemos(userId, page)
     }
 
+    @ApiOperation("특정 사용자의 태그가 동일한 메모 조회")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "메모 조회 성공"),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
+        ApiResponse(code = 404, message = "해당 id의 사용자 없음")
+    )
+    @GetMapping("/users/{userId}/page/{page}/tag/{tag}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun getAllMemosByUserId(
+        @PathVariable userId: Int,
+        @PathVariable page: Int,
+        @PathVariable tag: String
+    ): List<Memo> {
+        return memoService.selectMemosByTag(userId, tag, page)
+    }
+
     @ApiOperation("모든 메모 조회")
     @ApiResponses(
         ApiResponse(code = 200, message = "메모 조회 성공"),
