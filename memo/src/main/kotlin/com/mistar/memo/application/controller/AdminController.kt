@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/admin")
+@RequestMapping("/v2/admin")
 class AdminController(
     private val adminService: AdminService,
     private val memoService: MemoService
