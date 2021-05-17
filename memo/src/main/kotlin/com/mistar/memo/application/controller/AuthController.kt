@@ -8,9 +8,10 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v2/auth")
 class AuthController(
     private val authService: AuthService
 ) {
@@ -24,7 +25,7 @@ class AuthController(
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(
         @RequestBody userSignupRequest: UserSignupRequest
-    ) {
+    ): Mono<Unit> {
         return authService.signup(userSignupRequest.toUserSignupDto())
     }
 

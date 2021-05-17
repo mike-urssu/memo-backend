@@ -10,6 +10,8 @@ import java.util.*
 interface UserRepository : JpaRepository<User, Int> {
     fun existsByUsername(username: String): Boolean
 
+    fun save(user: User)
+
     fun findByUsername(username: String): Optional<User>
 
     fun findAllByIsDeletedIsFalse(page: Pageable): List<User>
