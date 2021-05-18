@@ -8,14 +8,12 @@ import com.mistar.memo.domain.exception.UserNotFoundException
 import com.mistar.memo.domain.model.dto.UserSignInDto
 import com.mistar.memo.domain.model.dto.UserSignupDto
 import com.mistar.memo.domain.model.entity.User
-import com.mistar.memo.domain.model.repository.UserRepository
 import com.mistar.memo.domain.model.repository.UserRxRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
 @Service
 class AuthService(
-    private val userRepository: UserRepository,
     private val userRxRepository: UserRxRepository,
     private val jwtTokenProvider: JwtTokenProvider
 ) {
@@ -32,10 +30,15 @@ class AuthService(
             }.flatMap(userRxRepository::save)
     }
 
-    fun signIn(userSignInDto: UserSignInDto): String {
-        val user = userRepository.findByUsername(userSignInDto.username).orElseThrow { UserNotFoundException() }
-        if (!Salt.matchPassword(userSignInDto.password, user.password))
-            throw InvalidPasswordException()
-        return jwtTokenProvider.generateAccessToken(user.id!!, user.getUserRoles())
+    fun signIn(userSignInDto: UserSignInDto): Mono<String> {
+        return userRxRepository.findByUsername(userSignInDto.username)
+            .flatMap {
+                if (it.isEmpty) Mono.error(UserNotFoundException())
+                else Mono.just(it.get())
+            }.map {
+                if (!Salt.matchPassword(userSignInDto.password, it.password))
+                    throw InvalidPasswordException()
+                jwtTokenProvider.generateAccessToken(it.id!!, it.getUserRoles())
+            }
     }
 }
