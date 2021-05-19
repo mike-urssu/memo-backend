@@ -22,6 +22,5 @@ class UserRxRepositoryImpl(
 
     override fun findById(userId: Int): Mono<Optional<User>> {
         return Mono.fromCallable { userRepository.findById(userId) }
-            .subscribeOn(Schedulers.boundedElastic())
     }
 }

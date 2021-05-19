@@ -25,9 +25,7 @@ class AuthController(
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(
         @RequestBody userSignupRequest: UserSignupRequest
-    ): Mono<Unit> {
-        return authService.signup(userSignupRequest.toUserSignupDto())
-    }
+    ): Mono<Unit> = authService.signup(userSignupRequest.toUserSignupDto())
 
     @ApiOperation("로그인하기")
     @ApiResponses(
@@ -40,7 +38,5 @@ class AuthController(
     @ResponseStatus(HttpStatus.OK)
     fun signIn(
         @RequestBody userSignInRequest: UserSignInRequest
-    ): String {
-        return authService.signIn(userSignInRequest.toUserSignInDto())
-    }
+    ): Mono<String> = authService.signIn(userSignInRequest.toUserSignInDto())
 }
