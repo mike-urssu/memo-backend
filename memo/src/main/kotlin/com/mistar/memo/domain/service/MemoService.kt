@@ -29,9 +29,8 @@ class MemoService(
             content = memoPostDto.content,
             isPublic = memoPostDto.isPublic,
             tags = memoPostDto.tags,
-            userId = user.id!!
+            user = user
         )
-        user.memos.add(memo)
         memoRepository.save(memo)
         createTags(memo.id!!, memoPostDto.tags)
     }
@@ -68,7 +67,7 @@ class MemoService(
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
         val memo =
             memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow { MemoNotFoundException() }
-        if (memo.userId != userId)
+        if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
         return listOf(memo)
     }
@@ -138,7 +137,7 @@ class MemoService(
     @Transactional
     fun patchMemo(userId: Int, memoId: Int, memoPatchDto: MemoPatchDto) {
         val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
-        if (memo.userId != userId)
+        if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
 
         if (memoPatchDto.title != null)
@@ -181,7 +180,7 @@ class MemoService(
 
     fun deleteMemo(userId: Int, memoId: Int) {
         val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
-        if (memo.id != userId)
+        if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
 
         memo.isDeleted = true
