@@ -26,9 +26,6 @@ data class User(
     var isDeleted: Boolean = false,
 
     var deletedAt: LocalDateTime? = null,
-
-    @OneToMany(mappedBy = "userId")
-    val memos: MutableSet<Memo> = mutableSetOf()
 ) {
     fun getUserRoles(): List<UserRole> {
         val role = mutableListOf<UserRole>()

@@ -9,5 +9,5 @@ interface UserRxRepository {
 
     fun save(user: User): Mono<Unit>
 
-    fun findByUsername(username: String): Mono<Optional<User>>
+    fun findById(userId: Int): Mono<Optional<User>>
 }
