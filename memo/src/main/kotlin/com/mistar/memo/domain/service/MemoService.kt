@@ -36,9 +36,8 @@ class MemoService(
                     content = memoPostDto.content,
                     isPublic = memoPostDto.isPublic,
                     tags = memoPostDto.tags,
-                    userId = it.id!!
+                    user = it
                 )
-                // it.memos.add(memo)  // org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.mistar.memo.domain.model.entity.User.memos, could not initialize proxy - no Session
                 Mono.just(memo)
             }.flatMap(memoRxRepository::save)
             .flatMap {
@@ -79,7 +78,7 @@ class MemoService(
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
         val memo =
             memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow { MemoNotFoundException() }
-        if (memo.userId != userId)
+        if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
         return listOf(memo)
     }
@@ -149,7 +148,7 @@ class MemoService(
     @Transactional
     fun patchMemo(userId: Int, memoId: Int, memoPatchDto: MemoPatchDto) {
         val memo = memoRepository.findById(memoId).orElseThrow { MemoNotFoundException() }
-        if (memo.userId != userId)
+        if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
 
         if (memoPatchDto.title != null)
