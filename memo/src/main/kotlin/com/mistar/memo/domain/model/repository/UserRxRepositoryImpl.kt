@@ -4,6 +4,7 @@ import com.mistar.memo.domain.model.entity.User
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.util.*
 
 @Repository
 class UserRxRepositoryImpl(
@@ -16,6 +17,11 @@ class UserRxRepositoryImpl(
 
     override fun save(user: User): Mono<Unit> {
         return Mono.fromCallable { userRepository.save(user) }
+            .subscribeOn(Schedulers.boundedElastic())
+    }
+
+    override fun findById(userId: Int): Mono<Optional<User>> {
+        return Mono.fromCallable { userRepository.findById(userId) }
             .subscribeOn(Schedulers.boundedElastic())
     }
 }

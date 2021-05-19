@@ -10,9 +10,9 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/v2/memos")
 class MemoController(
     private val memoService: MemoService
 ) {
@@ -23,11 +23,11 @@ class MemoController(
         ApiResponse(code = 401, message = "인증 안됨"),
         ApiResponse(code = 403, message = "권한 없음")
     )
-    @PostMapping("/post")
+    @PostMapping("/v2/memo")
     @ResponseStatus(HttpStatus.CREATED)
     fun createMemo(
         @RequestBody memoPostRequest: MemoPostRequest
-    ) {
+    ): Mono<Unit> {
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPostDto = memoPostRequest.toMemoPostDto()
         return memoService.createMemo(userId, memoPostDto)

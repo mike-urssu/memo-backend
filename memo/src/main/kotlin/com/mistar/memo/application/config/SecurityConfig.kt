@@ -27,8 +27,8 @@ class SecurityConfig(
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
             .antMatchers("/v2/auth/**").permitAll()
-            .antMatchers("/v2/memos/**").hasRole("USER")
             .antMatchers("/v2/admin/**").hasRole("ADMIN")
+            .antMatchers("/v2/**").hasRole("USER")
             .anyRequest().hasRole("ADMIN")
             .and()
             .addFilterBefore(

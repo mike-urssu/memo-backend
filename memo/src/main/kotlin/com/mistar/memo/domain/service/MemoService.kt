@@ -6,41 +6,52 @@ import com.mistar.memo.domain.model.dto.MemoPatchDto
 import com.mistar.memo.domain.model.dto.MemoPostDto
 import com.mistar.memo.domain.model.entity.Memo
 import com.mistar.memo.domain.model.entity.Tag
-import com.mistar.memo.domain.model.repository.MemoRepository
-import com.mistar.memo.domain.model.repository.TagRepository
-import com.mistar.memo.domain.model.repository.UserRepository
+import com.mistar.memo.domain.model.repository.*
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.LocalDateTime
+import kotlin.collections.LinkedHashSet
 
 @Service
 class MemoService(
     private val memoRepository: MemoRepository,
+    private val memoRxRepository: MemoRxRepository,
     private val tagRepository: TagRepository,
-    private val userRepository: UserRepository
+    private val tagRxRepository: TagRxRepository,
+    private val userRxRepository: UserRxRepository
 ) {
     private val defaultPageSize = 10
 
-    fun createMemo(userId: Int, memoPostDto: MemoPostDto) {
-        val user = userRepository.findById(userId).orElseThrow { UserNotFoundException() }
-        val memo = Memo(
-            title = memoPostDto.title,
-            content = memoPostDto.content,
-            isPublic = memoPostDto.isPublic,
-            tags = memoPostDto.tags,
-            userId = user.id!!
-        )
-        user.memos.add(memo)
-        memoRepository.save(memo)
-        createTags(memo.id!!, memoPostDto.tags)
+    fun createMemo(userId: Int, memoPostDto: MemoPostDto): Mono<Unit> {
+        return userRxRepository.findById(userId)
+            .flatMap {
+                if (it.isEmpty) Mono.error(UserNotFoundException())
+                else Mono.just(it.get())
+            }.flatMap {
+                val memo = Memo(
+                    title = memoPostDto.title,
+                    content = memoPostDto.content,
+                    isPublic = memoPostDto.isPublic,
+                    tags = memoPostDto.tags,
+                    userId = it.id!!
+                )
+                // it.memos.add(memo)  // org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.mistar.memo.domain.model.entity.User.memos, could not initialize proxy - no Session
+                Mono.just(memo)
+            }.flatMap(memoRxRepository::save)
+            .flatMap {
+                createTags(it.id!!, memoPostDto.tags)
+            }
     }
 
-    private fun createTags(memoId: Int, tags: Set<Tag>) {
-        for (tag in tags) {
-            tag.memoId = memoId
-            tagRepository.save(tag)
-        }
+    private fun createTags(memoId: Int, tags: Set<Tag>): Mono<Unit> {
+        return Flux.fromIterable(tags)
+            .flatMap {
+                it.memoId = memoId
+                tagRxRepository.save(it)
+            }.single()
     }
 
     fun selectAllMemos(page: Int): List<Memo> {

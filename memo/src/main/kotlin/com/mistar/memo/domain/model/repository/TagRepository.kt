@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TagRepository : JpaRepository<Tag, Int> {
+    fun save(tag: Tag)
+
     fun findByContentContaining(content: String): List<Tag>
 
     fun existsByMemoIdAndContent(memoId: Int, content: String): Boolean
