@@ -4,19 +4,21 @@ import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
 import com.mistar.memo.core.utils.ControllerUtils
+import com.mistar.memo.domain.model.dto.MemoDto
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
 class MemoController(
     private val memoService: MemoService
 ) {
-    @ApiOperation("메모 작성하기")
+    @ApiOperation("자신의 메모 작성하기")
     @ApiResponses(
         ApiResponse(code = 201, message = "메모 작성 성공"),
         ApiResponse(code = 400, message = "잘못된 요청"),
@@ -27,27 +29,32 @@ class MemoController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createMemo(
         @RequestBody memoPostRequest: MemoPostRequest
-    ): Mono<Unit> {
+    ): Flux<Unit> {
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memoPostDto = memoPostRequest.toMemoPostDto()
         return memoService.createMemo(userId, memoPostDto)
     }
 
-    @ApiOperation("모든 메모 불러오기")
+    @ApiOperation("자신의 모든 메모 조회하기")
     @ApiResponses(
         ApiResponse(code = 200, message = "모든 메모 조회 성공", response = MemoResponse::class),
         ApiResponse(code = 400, message = "잘못된 요청"),
         ApiResponse(code = 401, message = "인증 안됨"),
         ApiResponse(code = 403, message = "권한 없음")
     )
-    @GetMapping("/list/{page}")
+    @GetMapping("/v2/memos/{page}")
     @ResponseStatus(HttpStatus.OK)
-    fun selectAllMemos(
+    fun getMemos(
         @PathVariable page: Int
-    ): MemoResponse {
+    ): Mono<MemoResponse> {
         val userId = ControllerUtils.getUserIdFromAuthentication()
-        val memos = memoService.selectAllMemos(userId, page)
-        return MemoResponse(memos)
+        return memoService.getMemos(userId, page)
+            .map {
+                MemoDto(it)
+            }.collectList()
+            .map {
+                MemoResponse(it)
+            }
     }
 
     @ApiOperation("특정 id의 메모 불러오기")
@@ -65,6 +72,9 @@ class MemoController(
     ): MemoResponse {
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectMemosById(userId, memoId)
+            .map {
+                MemoDto(it)
+            }
         return MemoResponse(memos)
     }
 
@@ -83,6 +93,9 @@ class MemoController(
     ): MemoResponse {
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectMemosByTag(userId, tag, page)
+            .map {
+                MemoDto(it)
+            }
         return MemoResponse(memos)
     }
 

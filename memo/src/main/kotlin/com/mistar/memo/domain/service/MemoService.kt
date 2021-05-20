@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
-import kotlin.collections.LinkedHashSet
+import java.util.stream.Collector
 
 @Service
 class MemoService(
@@ -25,7 +25,7 @@ class MemoService(
 ) {
     private val defaultPageSize = 10
 
-    fun createMemo(userId: Int, memoPostDto: MemoPostDto): Mono<Unit> {
+    fun createMemo(userId: Int, memoPostDto: MemoPostDto): Flux<Unit> {
         return userRxRepository.findById(userId)
             .flatMap {
                 if (it.isEmpty) Mono.error(UserNotFoundException())
@@ -40,17 +40,20 @@ class MemoService(
                 )
                 Mono.just(memo)
             }.flatMap(memoRxRepository::save)
-            .flatMap {
+            .flatMapMany {
                 createTags(it.id!!, memoPostDto.tags)
             }
     }
 
-    private fun createTags(memoId: Int, tags: Set<Tag>): Mono<Unit> {
+    private fun createTags(memoId: Int, tags: Set<Tag>): Flux<Unit> {
         return Flux.fromIterable(tags)
             .flatMap {
                 it.memoId = memoId
                 tagRxRepository.save(it)
-            }.single()
+            }
+//            .next()
+//            .last()
+//            .single()
     }
 
     fun selectAllMemos(page: Int): List<Memo> {
@@ -64,15 +67,23 @@ class MemoService(
         return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
     }
 
-    fun selectAllMemos(userId: Int, page: Int): List<Memo> {
+    fun getMemos(userId: Int, page: Int): Flux<Memo> {
         if (page < 1)
             throw InvalidPageException()
-        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId).size
-        if (memoCnt < (page - 1) * 10)
-            throw PageOutOfBoundsException()
-
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId)
+        return memoRxRepository.findAllByUserIdAndIsDeletedAndIsPublic(
+            page = requestedPage,
+            userId = userId,
+            isDeleted = false,
+            isPublic = false
+        )
+
+//        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId).size
+//        if (memoCnt < (page - 1) * 10)
+//            throw PageOutOfBoundsException()
+
+//        val requestedPage = Page(page - 1, defaultPageSize)
+//        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId)
     }
 
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {

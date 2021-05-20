@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
 
 @RestController
 @RequestMapping("/v2/admin")
@@ -93,8 +94,8 @@ class AdminController(
     fun getAllMemosByUserId(
         @PathVariable userId: Int,
         @PathVariable page: Int
-    ): List<Memo> {
-        return memoService.selectAllMemos(userId, page)
+    ): Flux<Memo> {
+        return memoService.getMemos(userId, page)
     }
 
     @ApiOperation("특정 사용자의 태그가 동일한 메모 조회")
