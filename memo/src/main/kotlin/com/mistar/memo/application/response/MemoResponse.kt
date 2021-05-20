@@ -1,7 +1,7 @@
 package com.mistar.memo.application.response
 
-import com.mistar.memo.domain.model.entity.Memo
+import com.mistar.memo.domain.model.dto.MemoDto
 
 class MemoResponse(
-    val memos: List<Memo>
+    val memos: List<MemoDto>
 )

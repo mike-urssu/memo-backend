@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/v2/auth")
 class AuthController(
     private val authService: AuthService
 ) {
@@ -21,7 +20,7 @@ class AuthController(
         ApiResponse(code = 400, message = "잘못된 요청"),
         ApiResponse(code = 409, message = "중복 아이디")
     )
-    @PostMapping("/signup")
+    @PostMapping("/v2/auth/signup")
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(
         @RequestBody userSignupRequest: UserSignupRequest
@@ -34,7 +33,7 @@ class AuthController(
         ApiResponse(code = 404, message = "유저 정보 없음"),
         ApiResponse(code = 409, message = "비밀번호 오류")
     )
-    @PostMapping("/signin")
+    @PostMapping("/v2/auth/signin")
     @ResponseStatus(HttpStatus.OK)
     fun signIn(
         @RequestBody userSignInRequest: UserSignInRequest

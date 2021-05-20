@@ -20,7 +20,13 @@ class UserRxRepositoryImpl(
             .subscribeOn(Schedulers.boundedElastic())
     }
 
+    override fun findByUsername(username: String): Mono<Optional<User>> {
+        return Mono.fromCallable { userRepository.findByUsername(username) }
+            .subscribeOn(Schedulers.boundedElastic())
+    }
+
     override fun findById(userId: Int): Mono<Optional<User>> {
         return Mono.fromCallable { userRepository.findById(userId) }
+            .subscribeOn(Schedulers.boundedElastic())
     }
 }
