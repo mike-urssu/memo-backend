@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
-import java.util.stream.Collector
 
 @Service
 class MemoService(
@@ -71,19 +70,26 @@ class MemoService(
         if (page < 1)
             throw InvalidPageException()
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRxRepository.findAllByUserIdAndIsDeletedAndIsPublic(
-            page = requestedPage,
-            userId = userId,
-            isDeleted = false,
-            isPublic = false
-        )
+        return userRxRepository.findById(userId)
+            .flatMap {
+                if (it.isEmpty) Mono.error(UserNotFoundException())
+                else Mono.just(it.get())
+            }
+            .flatMapMany {
+                memoRxRepository.findAllByUserIdAndIsDeletedAndIsPublic(
+                    page = requestedPage,
+                    userId = userId,
+                    isDeleted = false,
+                    isPublic = true
+                )
+            }
 
 //        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId).size
 //        if (memoCnt < (page - 1) * 10)
 //            throw PageOutOfBoundsException()
-
+//
 //        val requestedPage = Page(page - 1, defaultPageSize)
-//        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId)
+//        return memoRepository.findAllByUserIdAndIsDeletedAndIsPublic(requestedPage, userId, false, true)
     }
 
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {

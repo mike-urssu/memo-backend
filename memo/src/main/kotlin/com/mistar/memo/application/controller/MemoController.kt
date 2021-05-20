@@ -51,7 +51,8 @@ class MemoController(
         return memoService.getMemos(userId, page)
             .map {
                 MemoDto(it)
-            }.collectList()
+            }
+            .collectList()
             .map {
                 MemoResponse(it)
             }

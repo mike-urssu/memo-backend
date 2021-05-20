@@ -31,4 +31,12 @@ data class Memo(
 
     @ManyToOne
     var user: User
-)
+) {
+    fun getTags(): List<String> {
+        val tagList = mutableListOf<String>()
+        tags.toList().forEach {
+            tagList.add(it.content)
+        }
+        return tagList
+    }
+}
