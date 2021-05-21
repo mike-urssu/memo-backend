@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.util.*
 
 @Repository
 class MemoRxRepositoryImpl(
@@ -32,5 +33,10 @@ class MemoRxRepositoryImpl(
         }
             .subscribeOn(Schedulers.boundedElastic())
             .flatMapMany { Flux.fromIterable(it) }
+    }
+
+    override fun findByUserIdAndIdAndIsDeleted(userId: Int, memoId: Int, isDeleted: Boolean): Mono<Optional<Memo>> {
+        return Mono.fromCallable { memoRepository.findByUserIdAndIdAndIsDeleted(userId, memoId, isDeleted) }
+            .subscribeOn(Schedulers.boundedElastic())
     }
 }
