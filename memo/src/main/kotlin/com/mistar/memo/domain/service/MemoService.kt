@@ -50,9 +50,6 @@ class MemoService(
                 it.memoId = memoId
                 tagRxRepository.save(it)
             }
-//            .next()
-//            .last()
-//            .single()
     }
 
     fun selectAllMemos(page: Int): List<Memo> {
