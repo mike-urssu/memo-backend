@@ -3,7 +3,6 @@ package com.mistar.memo.application.controller
 import com.mistar.memo.application.request.MemoPatchRequest
 import com.mistar.memo.application.request.MemoPostRequest
 import com.mistar.memo.application.response.MemoResponse
-import com.mistar.memo.application.response.MemosResponse
 import com.mistar.memo.core.utils.ControllerUtils
 import com.mistar.memo.domain.model.dto.MemoDto
 import com.mistar.memo.domain.service.MemoService
@@ -38,7 +37,7 @@ class MemoController(
 
     @ApiOperation("자신의 모든 메모 조회하기")
     @ApiResponses(
-        ApiResponse(code = 200, message = "모든 메모 조회 성공", response = MemosResponse::class),
+        ApiResponse(code = 200, message = "모든 메모 조회 성공", response = MemoResponse::class),
         ApiResponse(code = 400, message = "잘못된 요청"),
         ApiResponse(code = 401, message = "인증 안됨"),
         ApiResponse(code = 403, message = "권한 없음")
@@ -47,37 +46,42 @@ class MemoController(
     @ResponseStatus(HttpStatus.OK)
     fun getMemos(
         @PathVariable page: Int
-    ): Mono<MemosResponse> {
-        val userId = ControllerUtils.getUserIdFromAuthentication()
-        return memoService.getMemosByUserId(userId, page)
-            .map {
-                MemosResponse(it)
-            }
-    }
-
-    @ApiOperation("자신의 특정 메모 조회하기")
-    @ApiResponses(
-        ApiResponse(code = 200, message = "메모 조회 성공", response = MemoResponse::class),
-        ApiResponse(code = 400, message = "잘못된 요청"),
-        ApiResponse(code = 401, message = "인증 안됨"),
-        ApiResponse(code = 403, message = "권한 없음"),
-        ApiResponse(code = 404, message = "해당 id의 메모 없음")
-    )
-    @GetMapping("/v2/memo/{memoId}")
-    @ResponseStatus(HttpStatus.OK)
-    fun getMemoById(
-        @PathVariable memoId: Int
     ): Mono<MemoResponse> {
         val userId = ControllerUtils.getUserIdFromAuthentication()
-        return memoService.getMemoByMemoId(userId, memoId)
+        return memoService.getMemos(userId, page)
+            .map {
+                MemoDto(it)
+            }
+            .collectList()
             .map {
                 MemoResponse(it)
             }
     }
 
+    @ApiOperation("특정 id의 메모 불러오기")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "해당 id의 메모 조회 성공", response = MemoResponse::class),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 401, message = "인증 안됨"),
+        ApiResponse(code = 403, message = "권한 없음"),
+        ApiResponse(code = 404, message = "해당 id의 메모 없음")
+    )
+    @GetMapping("/{memoId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun selectMemosById(
+        @PathVariable memoId: Int,
+    ): MemoResponse {
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        val memos = memoService.selectMemosById(userId, memoId)
+            .map {
+                MemoDto(it)
+            }
+        return MemoResponse(memos)
+    }
+
     @ApiOperation("태그가 동일한 메모 불러오기")
     @ApiResponses(
-        ApiResponse(code = 200, message = "동일 태그에 대한 메모 조회 성공", response = MemosResponse::class),
+        ApiResponse(code = 200, message = "동일 태그에 대한 메모 조회 성공", response = MemoResponse::class),
         ApiResponse(code = 400, message = "잘못된 요청"),
         ApiResponse(code = 401, message = "인증 안됨"),
         ApiResponse(code = 403, message = "권한 없음")
@@ -87,13 +91,13 @@ class MemoController(
     fun selectMemosByTag(
         @PathVariable tag: String,
         @PathVariable page: Int
-    ): MemosResponse {
+    ): MemoResponse {
         val userId = ControllerUtils.getUserIdFromAuthentication()
         val memos = memoService.selectMemosByTag(userId, tag, page)
             .map {
                 MemoDto(it)
             }
-        return MemosResponse(memos)
+        return MemoResponse(memos)
     }
 
     @ApiOperation("메모 수정하기")
