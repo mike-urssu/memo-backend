@@ -50,10 +50,6 @@ class MemoController(
         val userId = ControllerUtils.getUserIdFromAuthentication()
         return memoService.getMemos(userId, page)
             .map {
-                MemoDto(it)
-            }
-            .collectList()
-            .map {
                 MemosResponse(it)
             }
     }
