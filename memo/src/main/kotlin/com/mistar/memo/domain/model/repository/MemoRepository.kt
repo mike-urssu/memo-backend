@@ -22,8 +22,6 @@ interface MemoRepository : JpaRepository<Memo, Int> {
         isPublic: Boolean
     ): List<Memo>
 
-    fun findByUserIdAndIdAndIsDeleted(userId: Int, memoId: Int, isDeleted: Boolean): Optional<Memo>
-
     fun findAllByDeletedAtBeforeAndIsDeletedIsTrue(now: LocalDateTime): List<Memo>
 
     fun existsByUserIdAndId(userId: Int, memoId: Int): Boolean

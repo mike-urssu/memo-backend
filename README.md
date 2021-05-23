@@ -22,12 +22,12 @@
 4. 메모 구현
     - 메모를 **작성**하는 api를 구현해야 한다. : `POST /v2/memo`
       - (메모에는 제목(선택), 내용(필수), 작성일자(필수), 공개 여부(필수), 태그(선택)가 있다)
-    - **모든 메모를 보는** api를 구현해야 한다. : `GET /v2/memos/{page}`
-    - **특정 메모를 보는** api를 구현해야 한다. : `GET /v2/memo/{memoId}`
-    - **태그가 동일한 메모를 보는** api를 구현해야 한다. : `GET /v2/memos/list/{page}/tags/{tag}`       
-    - 메모를 **수정**하는 api를 구현해야 한다. : `PUT /v2/memos/patch/{memoId}`
-    - 메모를 **삭제**하는 api를 구현해야 한다. : `DELETE /v2/memos/delete/{memoId}`
-
+    - 자신의 **모든 메모를 보는** api를 구현해야 한다. : `GET /v2/memos/list/{page}`
+    - 자신의 **특정 ID의 메모를 보는** api를 구현해야 한다. : `GET /v2/memo/{memoId}`
+    - 자신의 **태그가 동일한 메모를 보는** api를 구현해야 한다. : `GET /v2/memos/list/{page}/tags/{tag}`
+    - 자신의 메모를 **수정**하는 api를 구현해야 한다. : `PUT /v2/memos/patch/{memoId}`
+    - 자신의 메모를 **삭제**하는 api를 구현해야 한다. : `DELETE /v2/memos/delete/{memoId}`
+   
 ### 관리자 요구 기능
 1. 사용자 관리
     - **사용자의 정보를 볼** 수 있어야 한다. : `GET /v2/admin/users/list/{page}`

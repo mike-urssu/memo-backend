@@ -53,7 +53,18 @@ class MemoService(
             }
     }
 
-    fun getMemosByUserId(userId: Int, page: Int): Mono<List<MemoDto>> {
+    fun selectAllMemos(page: Int): List<Memo> {
+        if (page < 1)
+            throw InvalidPageException()
+        val memoCnt = memoRepository.findAllByIsDeletedIsFalse().size
+        if (memoCnt < (page - 1) * 10)
+            throw PageOutOfBoundsException()
+
+        val requestedPage = Page(page - 1, defaultPageSize)
+        return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
+    }
+
+    fun getMemos(userId: Int, page: Int): Mono<List<MemoDto>> {
         if (page < 1)
             throw InvalidPageException()
         val requestedPage = Page(page - 1, defaultPageSize)
@@ -74,27 +85,12 @@ class MemoService(
             }.collectList()
     }
 
-    fun getMemoByMemoId(userId: Int, memoId: Int): Mono<MemoDto> {
-        return memoRxRepository.findByUserIdAndIdAndIsDeleted(userId, memoId, false)
-            .flatMap {
-                if (it.isEmpty) Mono.error(MemoNotFoundException())
-                else Mono.just(it.get())
-            }.map {
-                MemoDto(it)
-            }
-    }
-
-
-    
-    fun selectAllMemos(page: Int): List<Memo> {
-        if (page < 1)
-            throw InvalidPageException()
-        val memoCnt = memoRepository.findAllByIsDeletedIsFalse().size
-        if (memoCnt < (page - 1) * 10)
-            throw PageOutOfBoundsException()
-
-        val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
+    fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
+        val memo =
+            memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow { MemoNotFoundException() }
+        if (memo.user.id != userId)
+            throw UserAndMemoNotMatchedException()
+        return listOf(memo)
     }
 
     fun selectMemosByTag(userId: Int, tag: String, page: Int): List<Memo> {
