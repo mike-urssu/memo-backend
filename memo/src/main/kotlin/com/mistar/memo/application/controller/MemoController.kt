@@ -66,7 +66,7 @@ class MemoController(
         ApiResponse(code = 403, message = "권한 없음"),
         ApiResponse(code = 404, message = "메모 없음")
     )
-    @GetMapping("/{memoId}")
+    @GetMapping("/v2/memo/{memoId}")
     @ResponseStatus(HttpStatus.OK)
     fun selectMemosById(
         @PathVariable memoId: Int,
