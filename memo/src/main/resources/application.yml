@@ -1,3 +1,9 @@
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET}
+    accessTokenValidMS: 3600000
+    refreshTokenValidMS: 604800000
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,8 +25,3 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-
-memo:
-  jwt:
-    secret: ${JWT_SECRET}
-    expirationInMs: 3600000
