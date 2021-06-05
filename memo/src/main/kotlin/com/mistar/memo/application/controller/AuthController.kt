@@ -2,8 +2,6 @@ package com.mistar.memo.application.controller
 
 import com.mistar.memo.application.request.UserSignInRequest
 import com.mistar.memo.application.request.UserSignupRequest
-import com.mistar.memo.application.response.TokenResponse
-import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.domain.service.AuthService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -14,8 +12,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/auth")
 class AuthController(
-    private val authService: AuthService,
-    private val jwtTokenProvider: JwtTokenProvider
+    private val authService: AuthService
 ) {
     @ApiOperation("회원가입하기")
     @ApiResponses(
@@ -27,9 +24,7 @@ class AuthController(
     @ResponseStatus(HttpStatus.CREATED)
     fun signup(
         @RequestBody userSignupRequest: UserSignupRequest
-    ) {
-        return authService.signup(userSignupRequest.toUserSignupDto())
-    }
+    ) = authService.signup(userSignupRequest.toUserSignupDto())
 
     @ApiOperation("로그인하기")
     @ApiResponses(
@@ -42,10 +37,5 @@ class AuthController(
     @ResponseStatus(HttpStatus.OK)
     fun signIn(
         @RequestBody userSignInRequest: UserSignInRequest
-    ): TokenResponse {
-        val user = authService.signIn(userSignInRequest.toUserSignInDto())
-        val accessToken = jwtTokenProvider.generateAccessToken(user.id!!, user.getUserRoles())
-        val refreshToken = jwtTokenProvider.generateRefreshToken(user.id, user.getUserRoles())
-        return TokenResponse(accessToken, refreshToken)
-    }
+    ) = authService.signIn(userSignInRequest.toUserSignInDto())
 }

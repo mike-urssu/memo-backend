@@ -19,25 +19,36 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.mindrot:jbcrypt:0.3m")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+    runtimeOnly("mysql:mysql-connector-java")
+    // implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    // runtimeOnly("dev.miku:r2dbc-mysql")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     implementation("io.springfox:springfox-boot-starter:3.0.0")
-    implementation("org.mindrot:jbcrypt:0.3m")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("io.jsonwebtoken:jjwt-api:0.10.5")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.10.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.10.5")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    // runtimeOnly("dev.miku:r2dbc-mysql")
-    runtimeOnly("mysql:mysql-connector-java")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    // Test
+    testCompileOnly("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("junit")
+    }
     testImplementation("io.projectreactor:reactor-test")
 }
 
