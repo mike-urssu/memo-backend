@@ -1,7 +1,9 @@
 package com.mistar.memo.application.controller
 
 import com.mistar.memo.application.request.UserSignInRequest
+import com.mistar.memo.application.request.UserSignOutRequest
 import com.mistar.memo.application.request.UserSignupRequest
+import com.mistar.memo.core.utils.ControllerUtils
 import com.mistar.memo.domain.service.AuthService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -30,7 +32,7 @@ class AuthController(
     @ApiResponses(
         ApiResponse(code = 200, message = "로그인 성공"),
         ApiResponse(code = 400, message = "잘못된 요청"),
-        ApiResponse(code = 404, message = "유저 정보 없음"),
+        ApiResponse(code = 404, message = "회원 정보 없음"),
         ApiResponse(code = 409, message = "비밀번호 오류")
     )
     @PostMapping("/signin")
@@ -38,4 +40,20 @@ class AuthController(
     fun signIn(
         @RequestBody userSignInRequest: UserSignInRequest
     ) = authService.signIn(userSignInRequest.toUserSignInDto())
+
+    @ApiOperation("로그아웃하기")
+    @ApiResponses(
+        ApiResponse(code = 200, message = "로그아웃 성공"),
+        ApiResponse(code = 400, message = "잘못된 요청"),
+        ApiResponse(code = 404, message = "회원 정보 없음"),
+        ApiResponse(code = 409, message = "토큰 불일치")
+    )
+    @DeleteMapping("/signout")
+    @ResponseStatus(HttpStatus.OK)
+    fun signOut(
+        @RequestBody userSignOutRequest: UserSignOutRequest
+    ) {
+        val userId = ControllerUtils.getUserIdFromAuthentication()
+        authService.signOut(userId, userSignOutRequest.toUserSignOutDto())
+    }
 }

@@ -2,7 +2,7 @@
 
 메모장 API dev-1.1.0
 
-## [Swagger-Ui 바로가기](http://.../swagger-ui/index.html)
+## [Swagger-Ui 바로가기](localhost/swagger-ui/index.html)
 
 ## 기능 요구사항
 
@@ -18,6 +18,9 @@
 
 3. 로그인 api 구현 : `POST /v1/auth/signin`
     - **사용자 이름과 비밀번호**를 받아서 **로그인**하는 api를 구현해야 한다.
+   
+4. 로그아웃 api 구현: `DELETE /v1/auth/signout`
+    - **refreshToken**을 받아서 **로그아웃**하는 api를 구현해야 한다.
 
 4. 메모 구현
     - 메모를 **작성**하는 api를 구현해야 한다. : `POST /v1/memos/post`
