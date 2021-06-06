@@ -12,9 +12,9 @@ interface UserRepository : JpaRepository<User, Int> {
 
     fun findByUsername(username: String): Optional<User>
 
-    fun findAllByIsDeletedIsFalse(page: Pageable): List<User>
+    fun findAllByIsDeleted(page: Pageable, isDeleted: Boolean): List<User>
 
-    fun countByIsDeletedIsFalse(): Long
+    fun countByIsDeleted(isDeleted: Boolean): Long
 
     fun findByIdAndIsDeleted(userId: Int, isDeleted: Boolean): Optional<User>
 }

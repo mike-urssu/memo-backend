@@ -25,12 +25,12 @@ class AdminService(
     fun getUserList(page: Int): List<UserInfoDto> {
         if (page < 1)
             throw InvalidPageException()
-        val userCnt = userRepository.countByIsDeletedIsFalse()
+        val userCnt = userRepository.countByIsDeleted(false)
         if (userCnt < (page - 1) * 10)
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        val users = userRepository.findAllByIsDeletedIsFalse(requestedPage)
+        val users = userRepository.findAllByIsDeleted(requestedPage, false)
         val userList = arrayListOf<UserInfoDto>()
         for (user in users)
             userList.add(UserInfoDto(user))
@@ -52,7 +52,7 @@ class AdminService(
     }
 
     fun deleteMemo(memoId: Int) {
-        val memo = memoRepository.findByIdAndIsDeletedIsFalse(memoId).orElseThrow { MemoNotFoundException() }
+        val memo = memoRepository.findByIdAndIsDeleted(memoId, false).orElseThrow { MemoNotFoundException() }
         memo.isDeleted = true
         memo.deletedAt = LocalDateTime.now()
         memoRepository.save(memo)
