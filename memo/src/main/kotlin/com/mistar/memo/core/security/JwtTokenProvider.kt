@@ -18,13 +18,18 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider(
-    @Value("\${memo.jwt.secret}") private val jwtSecret: String,
-    @Value("\${memo.jwt.expirationInMs}") private val accessTokenValidMilSecond: Long = 0
+    @Value("\${app.jwt.secret}") private val jwtSecret: String,
+    @Value("\${app.jwt.accessTokenValidMS}") private val accessTokenValidMilliSecond: Long = 0,
+    @Value("\${app.jwt.refreshTokenValidMS}") private val refreshTokenValidMilliSecond: Long = 0
 ) {
     private val secretKey = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
 
     fun generateAccessToken(userId: Int, roles: List<UserRole>): String {
-        return generateToken(userId, roles, accessTokenValidMilSecond)
+        return generateToken(userId, roles, accessTokenValidMilliSecond)
+    }
+
+    fun generateRefreshToken(userId: Int, roles: List<UserRole>): String {
+        return generateToken(userId, roles, refreshTokenValidMilliSecond)
     }
 
     fun generateToken(userId: Int, roles: List<UserRole>, tokenValidMilSecond: Long): String {

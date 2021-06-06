@@ -1,11 +1,15 @@
 package com.mistar.memo.domain.service
 
-import com.mistar.memo.domain.exception.*
+import com.mistar.memo.domain.exception.auth.UserNotFoundException
+import com.mistar.memo.domain.exception.memo.InvalidPageException
+import com.mistar.memo.domain.exception.memo.MemoNotFoundException
+import com.mistar.memo.domain.exception.memo.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.memo.UserAndMemoNotMatchedException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.MemoPatchDto
 import com.mistar.memo.domain.model.dto.MemoPostDto
-import com.mistar.memo.domain.model.entity.Memo
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.memo.Memo
+import com.mistar.memo.domain.model.entity.memo.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
@@ -45,28 +49,28 @@ class MemoService(
     fun selectAllMemos(page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
-        val memoCnt = memoRepository.findAllByIsDeletedIsFalse().size
+        val memoCnt = memoRepository.findAllByIsDeleted(false).size
         if (memoCnt < (page - 1) * 10)
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByIsDeletedIsFalse(requestedPage)
+        return memoRepository.findAllByIsDeleted(requestedPage, false)
     }
 
     fun selectAllMemos(userId: Int, page: Int): List<Memo> {
         if (page < 1)
             throw InvalidPageException()
-        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(userId).size
+        val memoCnt = memoRepository.findAllByUserIdAndIsDeletedAndIsPublic(userId, false, true).size
         if (memoCnt < (page - 1) * 10)
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        return memoRepository.findAllByUserIdAndIsDeletedIsFalseAndIsPublicIsTrue(requestedPage, userId)
+        return memoRepository.findAllByUserIdAndIsDeletedAndIsPublic(requestedPage, userId, false, true)
     }
 
     fun selectMemosById(userId: Int, memoId: Int): List<Memo> {
         val memo =
-            memoRepository.findByIdAndIsDeletedIsFalseAndIsPublicIsTrue(memoId).orElseThrow { MemoNotFoundException() }
+            memoRepository.findByIdAndIsDeletedAndIsPublic(memoId, false, true).orElseThrow { MemoNotFoundException() }
         if (memo.user.id != userId)
             throw UserAndMemoNotMatchedException()
         return listOf(memo)
@@ -192,7 +196,7 @@ class MemoService(
     @Scheduled(cron = "0 0 0 * * *")
     fun deleteMemosByCron(): Int {
         val now = LocalDateTime.now().minusDays(7)
-        val memosToDelete = memoRepository.findAllByDeletedAtBeforeAndIsDeletedIsTrue(now)
+        val memosToDelete = memoRepository.findAllByDeletedAtBeforeAndIsDeleted(now, true)
         for (memo in memosToDelete) {
             tagRepository.deleteByMemoId(memo.id!!)
             memoRepository.deleteById(memo.id)

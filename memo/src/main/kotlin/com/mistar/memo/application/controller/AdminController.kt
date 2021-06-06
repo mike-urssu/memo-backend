@@ -1,8 +1,8 @@
 package com.mistar.memo.application.controller
 
 import com.mistar.memo.domain.model.dto.UserInfoDto
-import com.mistar.memo.domain.model.entity.Memo
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.memo.Memo
+import com.mistar.memo.domain.model.entity.memo.Tag
 import com.mistar.memo.domain.service.AdminService
 import com.mistar.memo.domain.service.MemoService
 import io.swagger.annotations.ApiOperation

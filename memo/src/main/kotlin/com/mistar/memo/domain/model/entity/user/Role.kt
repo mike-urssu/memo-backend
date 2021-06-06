@@ -1,7 +1,7 @@
-package com.mistar.memo.domain.model.entity
+package com.mistar.memo.domain.model.entity.user
 
-import com.mistar.memo.domain.model.entity.flag.Flag
-import com.mistar.memo.domain.model.entity.flag.FlagDefinition
+import com.mistar.memo.domain.model.entity.user.flag.Flag
+import com.mistar.memo.domain.model.entity.user.flag.FlagDefinition
 
 data class Role(override val value: Int) : Flag<Role.Flag>() {
 

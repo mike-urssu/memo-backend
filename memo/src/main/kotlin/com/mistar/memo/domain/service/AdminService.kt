@@ -1,13 +1,13 @@
 package com.mistar.memo.domain.service
 
-import com.mistar.memo.domain.exception.InvalidPageException
-import com.mistar.memo.domain.exception.MemoNotFoundException
-import com.mistar.memo.domain.exception.PageOutOfBoundsException
-import com.mistar.memo.domain.exception.UserNotFoundException
+import com.mistar.memo.domain.exception.memo.InvalidPageException
+import com.mistar.memo.domain.exception.memo.MemoNotFoundException
+import com.mistar.memo.domain.exception.memo.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.auth.UserNotFoundException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.UserInfoDto
-import com.mistar.memo.domain.model.entity.Role
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.user.Role
+import com.mistar.memo.domain.model.entity.memo.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
@@ -25,12 +25,12 @@ class AdminService(
     fun getUserList(page: Int): List<UserInfoDto> {
         if (page < 1)
             throw InvalidPageException()
-        val userCnt = userRepository.countByIsDeletedIsFalse()
+        val userCnt = userRepository.countByIsDeleted(false)
         if (userCnt < (page - 1) * 10)
             throw PageOutOfBoundsException()
 
         val requestedPage = Page(page - 1, defaultPageSize)
-        val users = userRepository.findAllByIsDeletedIsFalse(requestedPage)
+        val users = userRepository.findAllByIsDeleted(requestedPage, false)
         val userList = arrayListOf<UserInfoDto>()
         for (user in users)
             userList.add(UserInfoDto(user))
@@ -38,7 +38,7 @@ class AdminService(
     }
 
     fun deleteUser(userId: Int) {
-        val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        val user = userRepository.findByIdAndIsDeleted(userId, false).orElseThrow { UserNotFoundException() }
         user.roleFlag = 1
         user.isDeleted = true
         user.deletedAt = LocalDateTime.now()
@@ -46,13 +46,13 @@ class AdminService(
     }
 
     fun grantRole(userId: Int) {
-        val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        val user = userRepository.findByIdAndIsDeleted(userId, false).orElseThrow { UserNotFoundException() }
         user.roleFlag += Role.Flag.ADMIN.value
         userRepository.save(user)
     }
 
     fun deleteMemo(memoId: Int) {
-        val memo = memoRepository.findByIdAndIsDeletedIsFalse(memoId).orElseThrow { MemoNotFoundException() }
+        val memo = memoRepository.findByIdAndIsDeleted(memoId, false).orElseThrow { MemoNotFoundException() }
         memo.isDeleted = true
         memo.deletedAt = LocalDateTime.now()
         memoRepository.save(memo)
