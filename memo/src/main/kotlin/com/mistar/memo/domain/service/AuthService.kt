@@ -3,17 +3,18 @@ package com.mistar.memo.domain.service
 import com.mistar.memo.application.response.TokenResponse
 import com.mistar.memo.core.security.JwtTokenProvider
 import com.mistar.memo.core.utils.Salt
-import com.mistar.memo.domain.exception.*
+import com.mistar.memo.domain.exception.auth.*
+import com.mistar.memo.domain.model.dto.AccessTokenRefreshDto
 import com.mistar.memo.domain.model.dto.UserSignInDto
 import com.mistar.memo.domain.model.dto.UserSignOutDto
 import com.mistar.memo.domain.model.dto.UserSignupDto
-import com.mistar.memo.domain.model.entity.BlackList
-import com.mistar.memo.domain.model.entity.RefreshToken
-import com.mistar.memo.domain.model.entity.User
+import com.mistar.memo.domain.model.entity.user.Black
+import com.mistar.memo.domain.model.entity.user.RefreshToken
+import com.mistar.memo.domain.model.entity.user.User
 import com.mistar.memo.domain.model.repository.BlackListRepository
 import com.mistar.memo.domain.model.repository.RefreshTokenRepository
 import com.mistar.memo.domain.model.repository.UserRepository
-import org.slf4j.LoggerFactory
+import io.jsonwebtoken.JwtException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,8 +25,6 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val blackListRepository: BlackListRepository
 ) {
-    private val logger = LoggerFactory.getLogger(this.javaClass)
-
     fun signup(userSignupDto: UserSignupDto) {
         if (userRepository.existsByUsername(userSignupDto.username))
             throw UserAlreadyExistsException()
@@ -58,6 +57,29 @@ class AuthService(
         if (refreshToken.refreshToken != userSignOutDto.refreshToken)
             throw RefreshTokenNotMatchedException()
         refreshTokenRepository.delete(refreshToken)
-        blackListRepository.save(BlackList(userId, userSignOutDto.refreshToken))
+        blackListRepository.save(Black(userSignOutDto.refreshToken))
+    }
+
+    fun reissueAccessToken(userId: Int, accessTokenRefreshDto: AccessTokenRefreshDto): String {
+        val user = userRepository.findByIdAndIsDeleted(userId, false).orElseThrow { UserNotFoundException() }
+        isTokenValid(accessTokenRefreshDto.refreshToken)
+        if (isTokenBlacked(accessTokenRefreshDto.refreshToken))
+            throw BlackedUserException()
+        return jwtTokenProvider.generateAccessToken(userId, user.getUserRoles())
+    }
+
+    private fun isTokenValid(refreshToken: String) {
+        try {
+            val expireAt = jwtTokenProvider.getClaimsFromToken(refreshToken)["exp"] as Int
+            val now = System.currentTimeMillis() / 1000
+            if (now > expireAt)
+                throw ExpiredTokenException()
+        } catch (e: JwtException) {
+            throw InvalidTokenException()
+        }
+    }
+
+    private fun isTokenBlacked(refreshToken: String): Boolean {
+        return blackListRepository.existsById(refreshToken)
     }
 }

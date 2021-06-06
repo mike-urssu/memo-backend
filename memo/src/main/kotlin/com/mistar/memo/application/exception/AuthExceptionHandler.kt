@@ -1,7 +1,7 @@
 package com.mistar.memo.application.exception
 
 import com.mistar.memo.core.response.ErrorResponse
-import com.mistar.memo.domain.exception.*
+import com.mistar.memo.domain.exception.auth.*
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -39,6 +39,24 @@ class AuthExceptionHandler {
     @ExceptionHandler(RefreshTokenNotMatchedException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleRefreshTokenNotMatched(exception: RefreshTokenNotMatchedException): ErrorResponse {
-        return ErrorResponse(HttpStatus.CONFLICT, "User-005", exception.message!!)
+        return ErrorResponse(HttpStatus.CONFLICT, "Token-001", exception.message!!)
+    }
+
+    @ExceptionHandler(InvalidTokenException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleInvalidTokenSignature(exception: InvalidTokenException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Token-002", exception.message!!)
+    }
+
+    @ExceptionHandler(ExpiredTokenException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleExpiredToken(exception: ExpiredTokenException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Token-003", exception.message!!)
+    }
+
+    @ExceptionHandler(BlackedUserException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleBlackedUser(exception: BlackedUserException): ErrorResponse {
+        return ErrorResponse(HttpStatus.CONFLICT, "Token-004", exception.message!!)
     }
 }

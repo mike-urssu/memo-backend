@@ -1,6 +1,6 @@
 package com.mistar.memo.domain.model.repository
 
-import com.mistar.memo.domain.model.entity.RefreshToken
+import com.mistar.memo.domain.model.entity.user.RefreshToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 

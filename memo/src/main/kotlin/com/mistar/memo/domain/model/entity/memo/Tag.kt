@@ -1,4 +1,4 @@
-package com.mistar.memo.domain.model.entity
+package com.mistar.memo.domain.model.entity.memo
 
 import javax.persistence.*
 
