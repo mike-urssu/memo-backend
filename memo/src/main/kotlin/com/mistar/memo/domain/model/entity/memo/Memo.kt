@@ -1,5 +1,6 @@
-package com.mistar.memo.domain.model.entity
+package com.mistar.memo.domain.model.entity.memo
 
+import com.mistar.memo.domain.model.entity.user.User
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import javax.persistence.*

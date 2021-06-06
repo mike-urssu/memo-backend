@@ -1,6 +1,6 @@
-package com.mistar.memo.domain.model.entity
+package com.mistar.memo.domain.model.entity.user
 
-import com.mistar.memo.domain.model.entity.flag.and
+import com.mistar.memo.domain.model.entity.user.flag.and
 import com.mistar.memo.domain.model.enums.UserRole
 import java.time.LocalDateTime
 import javax.persistence.*

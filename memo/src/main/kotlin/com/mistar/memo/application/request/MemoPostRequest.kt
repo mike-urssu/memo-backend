@@ -1,7 +1,7 @@
 package com.mistar.memo.application.request
 
 import com.mistar.memo.domain.model.dto.MemoPostDto
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.memo.Tag
 
 class MemoPostRequest(
     private val title: String?,

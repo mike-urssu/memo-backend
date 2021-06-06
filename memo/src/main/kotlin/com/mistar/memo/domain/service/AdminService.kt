@@ -1,13 +1,13 @@
 package com.mistar.memo.domain.service
 
-import com.mistar.memo.domain.exception.InvalidPageException
-import com.mistar.memo.domain.exception.MemoNotFoundException
-import com.mistar.memo.domain.exception.PageOutOfBoundsException
-import com.mistar.memo.domain.exception.UserNotFoundException
+import com.mistar.memo.domain.exception.memo.InvalidPageException
+import com.mistar.memo.domain.exception.memo.MemoNotFoundException
+import com.mistar.memo.domain.exception.memo.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.auth.UserNotFoundException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.UserInfoDto
-import com.mistar.memo.domain.model.entity.Role
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.user.Role
+import com.mistar.memo.domain.model.entity.memo.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
@@ -38,7 +38,7 @@ class AdminService(
     }
 
     fun deleteUser(userId: Int) {
-        val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        val user = userRepository.findByIdAndIsDeleted(userId, false).orElseThrow { UserNotFoundException() }
         user.roleFlag = 1
         user.isDeleted = true
         user.deletedAt = LocalDateTime.now()
@@ -46,7 +46,7 @@ class AdminService(
     }
 
     fun grantRole(userId: Int) {
-        val user = userRepository.findByIdAndIsDeletedIsFalse(userId).orElseThrow { UserNotFoundException() }
+        val user = userRepository.findByIdAndIsDeleted(userId, false).orElseThrow { UserNotFoundException() }
         user.roleFlag += Role.Flag.ADMIN.value
         userRepository.save(user)
     }

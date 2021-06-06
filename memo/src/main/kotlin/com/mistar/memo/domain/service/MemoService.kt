@@ -1,11 +1,15 @@
 package com.mistar.memo.domain.service
 
-import com.mistar.memo.domain.exception.*
+import com.mistar.memo.domain.exception.auth.UserNotFoundException
+import com.mistar.memo.domain.exception.memo.InvalidPageException
+import com.mistar.memo.domain.exception.memo.MemoNotFoundException
+import com.mistar.memo.domain.exception.memo.PageOutOfBoundsException
+import com.mistar.memo.domain.exception.memo.UserAndMemoNotMatchedException
 import com.mistar.memo.domain.model.common.Page
 import com.mistar.memo.domain.model.dto.MemoPatchDto
 import com.mistar.memo.domain.model.dto.MemoPostDto
-import com.mistar.memo.domain.model.entity.Memo
-import com.mistar.memo.domain.model.entity.Tag
+import com.mistar.memo.domain.model.entity.memo.Memo
+import com.mistar.memo.domain.model.entity.memo.Tag
 import com.mistar.memo.domain.model.repository.MemoRepository
 import com.mistar.memo.domain.model.repository.TagRepository
 import com.mistar.memo.domain.model.repository.UserRepository
