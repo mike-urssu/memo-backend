@@ -1,12 +1,13 @@
-package com.mistar.memo.common
+package com.mistar.memo.auth
 
 import com.mistar.memo.application.request.UserSignupRequest
+import com.mistar.memo.common.BaseControllerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.post
 
-class AuthControllerTest : BaseControllerTest() {
+class SignupTest : BaseControllerTest() {
     @Test
     @DisplayName("회원가입 테스트")
     fun signupTest() {
